@@ -1,0 +1,14 @@
+# Node
+node_modules/
+
+# Env files
+.env
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.log
+
+# Build / Dist
+build/
+dist/
