@@ -10,10 +10,10 @@ namespace Auth_Service.Controllers
     public class NexthomeController : ControllerBase
     {
         [HttpPost("register")]
-        public string register(Role r)
+        public string register(User u)
         {
             var db = new NexthomeContext();
-            db.Roles.Add(r);
+            db.Users.Add(u);
             db.SaveChanges();
             return "Inserted succesfully";
         }
@@ -73,22 +73,34 @@ namespace Auth_Service.Controllers
         }
 
 
-        [HttpGet("login")]
-        public string login(string username, string password)
+        [HttpPost("login")]
+        public User login(string username, string password)
         {
             var db=new NexthomeContext();
             var user = db.Users
                     .FirstOrDefault(u => u.Email == username && u.Password == password);
             if(user!=null)
             {
-                return "Login successfull";
+                return user;
             }
             else
             {
-                return "login fail";
+                return null;
             }
 
         }
+        
+
+        [HttpGet("roles")]
+        public IEnumerable<Role> Getrole()
+        {
+            var db = new NexthomeContext();
+            return db.Roles.ToList();
+
+        }
+
+
+
 
 
 

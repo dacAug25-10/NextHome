@@ -1,0 +1,6 @@
+@Owner_HostAddress = http://localhost:5012
+
+GET {{Owner_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
