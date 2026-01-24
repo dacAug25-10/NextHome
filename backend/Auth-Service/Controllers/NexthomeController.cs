@@ -10,12 +10,37 @@ namespace Auth_Service.Controllers
     public class NexthomeController : ControllerBase
     {
         [HttpPost("register")]
-        public string register(User u)
+        public IActionResult Register([FromBody] RegisterDTO dto)
         {
-            var db = new NexthomeContext();
-            db.Users.Add(u);
+           var db=new NexthomeContext();
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .ToDictionary(
+                        x => x.Key,
+                        x => x.Value.Errors.First().ErrorMessage
+                    );
+
+                return BadRequest(errors);
+            }
+
+          
+            var user = new User
+            {
+                Name = dto.Name,
+                Email = dto.Email,
+                Password = dto.Password,
+                Phone = dto.Phone,
+                Gender = dto.Gender,
+                RoleId = dto.RoleId,
+                CreatedAt = DateOnly.FromDateTime(dto.CreatedAt)
+            };
+
+            db.Users.Add(user);
             db.SaveChanges();
-            return "Inserted succesfully";
+
+            return Ok("Inserted successfully");
         }
 
         [HttpPost("pg-property")]
@@ -73,37 +98,61 @@ namespace Auth_Service.Controllers
         }
 
 
-        [HttpPost("login")]
-        public User login(string username, string password)
-        {
-            var db=new NexthomeContext();
-            var user = db.Users
-                    .FirstOrDefault(u => u.Email == username && u.Password == password);
-            if(user!=null)
-            {
-                return user;
-            }
-            else
-            {
-                return null;
-            }
 
+        [HttpPost("login")]
+        public ActionResult<UserResponse> Login(string username, string password)
+        {
+            using var db = new NexthomeContext();
+
+            var user = db.Users
+                .Include(u => u.Role)
+                .FirstOrDefault(u => u.Email == username && u.Password == password);
+
+            if (user == null)
+                return Unauthorized("Invalid username or password");
+
+            var response = new UserResponse
+            {
+                UserId = user.UserId,
+                Name = user.Name ?? "",
+                Email = user.Email ?? "",
+                Phone = user.Phone ?? "",
+                Gender = user.Gender ?? "",
+                CreatedAt = user.CreatedAt,
+                Status = user.Status ?? "",
+                Role = user.Role?.RoleName ?? "Tenant"
+            };
+
+            return Ok(response);
         }
-        
+
+
+
+
+
+
 
         [HttpGet("roles")]
-        public IEnumerable<Role> Getrole()
+        public IEnumerable<GetRole> Getrole()
         {
             var db = new NexthomeContext();
-            return db.Roles.ToList();
 
+            return db.Roles
+                .Select(r => new GetRole
+                {
+                    RoleId = r.RoleId,
+                    RoleName = r.RoleName
+                })
+                .ToList();
         }
 
-
-
-
-
-
     }
-
 }
+
+
+
+
+
+    
+
+

@@ -17,3 +17,7 @@ dist/
 .vs/
 bin/
 obj/
+
+# .NET build outputs
+backend/**/bin/
+backend/**/obj/

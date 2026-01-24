@@ -12,6 +12,19 @@ export default function Login() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const [errors, setErrors] = useState({});
+
+const validateLogin = () => {
+  const newErrors = {};
+
+  if (!formData.username.trim()) newErrors.username = "Username is required";
+  if (!formData.password) newErrors.password = "Password is required";
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
+
   const handleSubmit = (e) => {
   e.preventDefault();
 
@@ -19,8 +32,13 @@ export default function Login() {
     method: 'POST'
   })
     .then(async res => {
-      const text = await res.text(); 
+      const text = await res.text();
       console.log('Raw response:', text);
+
+      if (!res.ok) {
+        throw new Error(text || "Login failed");
+      }
+
       try {
         return JSON.parse(text); 
       } catch {
@@ -29,14 +47,14 @@ export default function Login() {
     })
     .then(data => {
       console.log('Login response:', data);
-      if (!data || data === "null") {
-        alert("Invalid username or password");
-      } else {
-        alert("Login successful!");
-      }
+      alert("Login successful!");
     })
-    .catch(err => console.error('Error logging in:', err));
+    .catch(err => {
+      console.error('Error logging in:', err);
+      alert(err.message);
+    });
 };
+
 
   return (
     <div className="login-wrapper">
