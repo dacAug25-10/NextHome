@@ -1,118 +1,92 @@
- 
-.navbar {
+.navbar-custom {
   background: linear-gradient(90deg, #007bff, #00c6ff);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   padding: 0.8rem 1rem;
-  position: sticky;
-  top: 0;
-  z-index: 999;
-  transition: background 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.3); /* subtle border */
+  transition: all 0.3s ease;
+}
+
+.navbar-custom:active {
+  transform: scale(0.99);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .navbar-brand {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #fff !important;
-  letter-spacing: 1px;
-  transition: transform 0.3s ease;
+  color: #fff;
+  transition: all 0.3s ease;
 }
 
 .navbar-brand:hover {
   transform: scale(1.05);
-  color: #ffd700 !important;
+  color: #ffd700;
+}
+
+.navbar-toggler {
+  border: 2px solid rgba(255,255,255,0.5); /* border around hamburger */
+  border-radius: 5px;
+  background: transparent;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.navbar-toggler:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.navbar-toggler-icon {
+  display: inline-block;
+  width: 30px;
+  height: 22px;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255,1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .nav-link {
-  font-size: 1rem;
+  color: #fff;
   margin-right: 1rem;
-  color: #fff !important;
-  position: relative;
-  transition: color 0.3s ease, transform 0.3s ease;
-}
-
-.nav-link::after {
-  content: "";
-  position: absolute;
-  width: 0%;
-  height: 2px;
-  bottom: 0;
-  left: 0;
-  background-color: #ffd700;
-  transition: width 0.3s;
-}
-
-.nav-link {
-  font-size: 1.05rem;
-  margin-right: 1rem;
-  color: #fff !important;
-  font-weight: 500;
-  position: relative;
-  overflow: hidden;
-  transition: color 0.3s ease, transform 0.3s ease;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 2px;
 }
 
 .nav-link:hover {
-  background: linear-gradient(90deg, #ffd700, #ff8c00, #ff4500);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  transform: translateY(-3px);
+  color: #ffd700;
+  border-bottom: 2px solid #ffd700;
 }
-
-.nav-link::after {
-  content: "";
-  position: absolute;
-  width: 0%;
-  height: 3px;
-  bottom: -3px;
-  left: 0;
-  background: linear-gradient(90deg, #ffd700, #ff8c00);
-  transition: width 0.4s ease;
-  border-radius: 2px;
-}
-
-.nav-link:hover::after {
-  width: 100%;
-}
-.nav-link.active {
-  background: linear-gradient(90deg, #ffd700, #ff8c00);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 600;
-}
-
-
 
 .nav-link.btn {
   background: linear-gradient(90deg, #ffd700, #ff8c00);
   color: #fff !important;
-  font-weight: 600;
-  padding: 0.5rem 1.2rem;
   border-radius: 30px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 0.5rem 1.2rem;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
 }
 
 .nav-link.btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.05);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-  color: #fff !important;
-}
-.navbar-toggler {
-  border: none;
-  outline: none;
+  border-color: #fff; /* adds border on hover */
 }
 
-.navbar-toggler-icon {
-  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/ %3E%3C/svg%3E");
+.nav-link.btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 991px) {
+  .navbar-nav {
+    text-align: center;
+  }
   .nav-link {
     margin: 0.5rem 0;
-    text-align: center;
   }
   .nav-link.btn {
     width: 100%;
-    text-align: center;
+    margin-top: 10px;
   }
-} 
+}

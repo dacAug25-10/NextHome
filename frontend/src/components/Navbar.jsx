@@ -1,47 +1,71 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import "../css/navbar.css";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import '../css/navbar.css';
 
 export default function Navbar() {
-  const location = useLocation(); 
-  const isLoginPage = location.pathname === "/login";
+  const [authMode, setAuthMode] = useState('login');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleAuthToggle = () => {
+    if (authMode === 'login') {
+      setAuthMode('register');
+      navigate('/login');
+    } else {
+      setAuthMode('login');
+      navigate('/register');
+    }
+    setMenuOpen(false); // close menu on click (mobile)
+  };
+
+  const handleToggleMenu = () => setMenuOpen(!menuOpen);
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <nav className="navbar navbar-custom navbar-expand-lg">
       <div className="container">
-        <Link className="navbar-brand fw-bold" to="/">NextHome</Link>
+        <Link className="navbar-brand" to="/">NextHome</Link>
+
         <button
           className="navbar-toggler"
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
+          onClick={handleToggleMenu}
         >
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div className="collapse navbar-collapse" id="navbarNav">
+        <div className={`collapse navbar-collapse ${menuOpen ? 'show' : ''}`}>
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <Link className="nav-link active" aria-current="page" to="/">Home</Link>
+              <Link className="nav-link" to="/" onClick={() => setMenuOpen(false)}>
+                Home
+              </Link>
             </li>
+
             <li className="nav-item">
-              <Link className="nav-link" to="/pg-listings">PG Listings</Link>
+              <Link className="nav-link" to="/pg-listings" onClick={() => setMenuOpen(false)}>
+                PG Listings
+              </Link>
             </li>
+
             <li className="nav-item">
-              <Link className="nav-link" to="/book-pg">Book PG</Link>
+              <Link className="nav-link" to="/book-pg" onClick={() => setMenuOpen(false)}>
+                Book PG
+              </Link>
             </li>
+
             <li className="nav-item">
-              <Link className="nav-link" to="/contact">Contact</Link>
+              <Link className="nav-link" to="/contact" onClick={() => setMenuOpen(false)}>
+                Contact
+              </Link>
             </li>
+
             <li className="nav-item">
-              {isLoginPage ? (
-                <Link className="nav-link btn btn-primary text-white ms-2" to="/">Register</Link>
-              ) : (
-                <Link className="nav-link btn btn-primary text-white ms-2" to="/login">Login</Link>
-              )}
+              <button
+                className="nav-link btn btn-auth"
+                onClick={handleAuthToggle}
+              >
+                {authMode === 'login' ? 'Login' : 'Register'}
+              </button>
             </li>
           </ul>
         </div>

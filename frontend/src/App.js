@@ -1,21 +1,23 @@
 import './App.css';
-import Navbar from './components/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import Register from './components/Register';
-import Login from './components/Login';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import Layout from './components/Layout';
+import Home from './components/Home';
+import Login from './components/Login';
+import Register from './components/Register';
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="App">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Register />} />      
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-        </Routes>
-      </div>
+          <Route path="/register" element={<Register />} />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }
