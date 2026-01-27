@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "../css/register.css";
 
+
 function Register() {
   const [formData, setFormData] = useState({
     id: '',
@@ -87,6 +88,8 @@ function Register() {
   };
 
   return (
+   <>
+   
     <div className="register-wrapper">
       <div className="register-card">
         <h2 className="register-title">Register</h2>
@@ -142,6 +145,7 @@ function Register() {
         </form>
       </div>
     </div>
+   </>
   );
 }
 

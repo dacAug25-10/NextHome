@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../css/login.css';
 
+
 export default function Login() {
   const [formData, setFormData] = useState({
     username: '',
@@ -63,6 +64,8 @@ export default function Login() {
   };
 
   return (
+   <>
+   
     <div className="login-wrapper">
       <div className="login-card">
         <h2 className="login-title">Login</h2>
@@ -91,5 +94,6 @@ export default function Login() {
         </form>
       </div>
     </div>
+   </>
   );
 }

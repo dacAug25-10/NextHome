@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import "../css/home.css";
 import homeImage from "../images/3d-view-house-with-copy-space.jpg"
 
+
 export default function Home() {
   return (
    <div id="Home">
+    
       <div className="hero-section">
         <div className="row align-items-center gx-4">
           
@@ -36,6 +38,7 @@ export default function Home() {
               alt="PG Renting Illustration"
               className="hero-img"
             />
+            
           </div>
 
         </div>

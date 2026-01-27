@@ -7,6 +7,7 @@ import Layout from './components/Layout';
 import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
+import OwnerDashboard from './components/ownerdashboard/OwnerDashBoard.jsx';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Route>
+        <Route path="/owner" element={<OwnerDashboard />}/>
       </Routes>
     </BrowserRouter>
   );
