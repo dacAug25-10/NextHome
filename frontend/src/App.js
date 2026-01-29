@@ -8,6 +8,7 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
 import OwnerDashboard from './components/ownerdashboard/OwnerDashBoard.jsx';
+import TenantDashboard from './components/tenantdashboard/TenantDashboard.jsx';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/register" element={<Register />} />
         </Route>
         <Route path="/owner" element={<OwnerDashboard />}/>
+        <Route path="/tenant" element={<TenantDashboard />}/>
       </Routes>
     </BrowserRouter>
   );
