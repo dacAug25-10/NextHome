@@ -1,50 +1,63 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 
 import "../../css/OwnerDashBoard.css";
 import AddPgForm from "./AddPg";
 
 const OwnerDashboard = ({ ownerId }) => {
-  const user = JSON.parse(localStorage.getItem('user'));
-
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  // ✅ SAFE localStorage access
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (err) {
+      console.warn("localStorage blocked");
+    }
+  }, []);
+
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    navigate('/');
+    try {
+      localStorage.removeItem("user");
+    } catch (e) {
+      console.warn("Cannot clear localStorage");
+    }
+    navigate("/");
   };
+
   return (
+    <div className="dashboard-container">
+      {/* Navbar */}
+      <nav className="navbar">
+        <div className="nav-left">
+          <h2 className="logo">NextHome</h2>
+        </div>
 
-    
-      <div className="dashboard-container">
-        {/* Navbar */}
-        <nav className="navbar">
-          <div className="nav-left">
-            <h2 className="logo">NextHome</h2>
-          </div>
+        <div className="nav-center">
+          Hi, {user?.name || "Owner"}
+        </div>
 
-          <div className="nav-center">
-           Hi, {user?.name || 'Owner'}
-          </div>
+        <div className="nav-right">
+          {/* ✅ relative path */}
+          <Link to="add-pg"><button>Add PG</button></Link>
+          <button className="logout" onClick={handleLogout}>Logout</button>
+        </div>
+      </nav>
 
-          <div className="nav-right">
-            <Link to="add-pg"><button>Add PG</button></Link>
-            <Link to="/requests"><button>Requests</button></Link>
-            <Link to="/complaints"><button>Complaints</button></Link>
-            <Link to="/ratings"><button>Ratings</button></Link>
-            <button className="logout" onClick={handleLogout}>
-            Logout
-          </button>
-          </div>
-        </nav>
+      {/* Main Content */}
+      <div className="content">
+        <Routes>
+          {/* ✅ Add PG */}
+          <Route path="add-pg" element={<AddPgForm ownerId={ownerId} />} />
 
-        {/* Main Content */}
-        <div className="content">
-          <Routes>
-            {/* Add PG Route */}
-            <Route path="/add-pg" element={<AddPgForm ownerId={ownerId} />} />
-
-            {/* Default Dashboard Home */}
-            <Route path="/" element={
+          {/* ✅ Default dashboard */}
+          <Route
+            index
+            element={
               <div>
                 <h2>Tenants Currently Living in Your PG</h2>
 
@@ -86,10 +99,11 @@ const OwnerDashboard = ({ ownerId }) => {
                   </tbody>
                 </table>
               </div>
-            } />
-          </Routes>
-        </div>
+            }
+          />
+        </Routes>
       </div>
+    </div>
   );
 };
 
