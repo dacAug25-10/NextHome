@@ -26,5 +26,9 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.Urls.Clear();
+app.Urls.Add("http://127.0.0.1:5011");
+app.Urls.Add("https://localhost:7168");
+
 
 app.Run();

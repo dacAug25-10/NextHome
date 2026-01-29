@@ -12,19 +12,28 @@ import AddPgForm from './components/ownerdashboard/AddPg.jsx';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Route>
-        <Route path="/owner/*" element={<OwnerDashboard />}>
-        <Route index element={<OwnerDashboard />} />
-        <Route path="add-pg" element={<AddPgForm ownerId={1} />} />
-      </Route>
-      </Routes>
-    </BrowserRouter>
+   <BrowserRouter>
+  <Routes>
+    <Route element={<Layout />}>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+    </Route>
+
+    {/* OWNER */}
+    <Route path="/owner/*" element={<OwnerDashboard />}>
+      <Route index element={<OwnerDashboard />} />
+      <Route path="add-pg" element={<AddPgForm ownerId={1} />} />
+    </Route>
+
+    {/* ADMIN */}
+    {/* <Route path="/admin" element={<AdminDashboard />} /> */}
+
+    {/* TENANT */}
+    {/* <Route path="/tenant" element={<TenantDashboard />} /> */}
+  </Routes>
+</BrowserRouter>
+
   );
 }
 
