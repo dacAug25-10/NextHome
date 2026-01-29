@@ -218,11 +218,12 @@ namespace Owner.Controllers
         }
 
         [HttpGet("cities")]
-        public IEnumerable<CityDTO> GetCities()
+        public IEnumerable<CityDTO> GetCities([FromQuery] int stateId)
         {
             using var db = new NexthomeContext();
 
             return db.Cities
+                     .Where(c => c.Sid == stateId)
                      .Select(c => new CityDTO
                      {
                          CityId = c.CityId,
@@ -233,11 +234,12 @@ namespace Owner.Controllers
         }
 
         [HttpGet("areas")]
-        public IEnumerable<AreaDTO> GetAreas()
+        public IEnumerable<AreaDTO> GetAreas(int cityId)
         {
             using var db = new NexthomeContext();
 
             return db.Areas
+                     .Where(a => a.CityId == cityId)
                      .Select(a => new AreaDTO
                      {
                          AreaId = a.AreaId,
@@ -246,6 +248,7 @@ namespace Owner.Controllers
                      })
                      .ToList();
         }
+
 
 
 

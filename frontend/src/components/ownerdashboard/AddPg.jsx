@@ -23,53 +23,64 @@ export default function AddPgForm({ ownerId }) {
   // ================= Load States =================
   useEffect(() => {
     fetch("http://localhost:5012/api/Owner/state")
-      .then((res) => res.json())
-      .then((data) => setStates(data))
-      .catch((err) => console.error("States API error:", err));
+      .then(res => res.json())
+      .then(data => setStates(data))
+      .catch(err => console.error("States API error:", err));
   }, []);
 
   // ================= Load Cities =================
   useEffect(() => {
-    if (form.stateId) {
-      setCities([]); // reset cities
-      fetch(`http://localhost:5012/api/Owner/cities?stateId=${form.stateId}`)
-        .then((res) => res.json())
-        .then((data) => setCities(data))
-        .catch((err) => console.error("Cities API error:", err));
+    if (!form.stateId) {
+      setCities([]);
+      return;
     }
+
+    setCities([]);
+    setAreas([]);
+    setForm(prev => ({ ...prev, cityId: "", areaId: "" }));
+
+    fetch(`http://localhost:5012/api/Owner/cities?stateId=${form.stateId}`)
+      .then(res => res.json())
+      .then(data => setCities(data))
+      .catch(err => console.error("Cities API error:", err));
   }, [form.stateId]);
 
   // ================= Load Areas =================
   useEffect(() => {
-    if (form.cityId) {
-      setAreas([]); // reset areas
-      fetch(`http://localhost:5012/api/Owner/areas?cityId=${form.cityId}`)
-        .then((res) => res.json())
-        .then((data) => setAreas(data))
-        .catch((err) => console.error("Areas API error:", err));
+    if (!form.cityId) {
+      setAreas([]);
+      return;
     }
+
+    setAreas([]);
+
+    fetch(`http://localhost:5012/api/Owner/areas?cityId=${form.cityId}`)
+      .then(res => res.json())
+      .then(data => setAreas(data))
+      .catch(err => console.error("Areas API error:", err));
   }, [form.cityId]);
 
   // ================= Handle Change =================
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
 
-    // Live validation
-    if (!value) {
-      setErrors((prev) => ({ ...prev, [name]: "This field is required" }));
-    } else {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
+    setForm(prev => ({
+      ...prev,
+      [name]:
+        name === "stateId" || name === "cityId" || name === "areaId"
+          ? Number(value)
+          : value
+    }));
+
+    setErrors(prev => ({ ...prev, [name]: "" }));
   };
 
   // ================= Handle Submit =================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
     const newErrors = {};
-    Object.keys(form).forEach((key) => {
+    Object.keys(form).forEach(key => {
       if (!form[key]) newErrors[key] = "This field is required";
     });
 
@@ -83,17 +94,18 @@ export default function AddPgForm({ ownerId }) {
     const payload = { ...form, ownerId };
 
     try {
-      const res = await fetch("http://localhost:5012/api/Owner/pgproperty/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await fetch(
+        "http://localhost:5012/api/Owner/pgproperty/add",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
 
-      const data = await res.json();
+      await res.json();
       alert("PG added successfully!");
-      console.log(data);
 
-      // Reset form
       setForm({
         pgName: "",
         description: "",
@@ -104,6 +116,7 @@ export default function AddPgForm({ ownerId }) {
         rent: "",
         facility: "",
       });
+
       setCities([]);
       setAreas([]);
     } catch (err) {
@@ -120,6 +133,7 @@ export default function AddPgForm({ ownerId }) {
         <h2>Add PG</h2>
 
         <form className="register-form" onSubmit={handleSubmit}>
+
           {/* PG Name */}
           <div className="form-field">
             <input
@@ -143,27 +157,29 @@ export default function AddPgForm({ ownerId }) {
               className={errors.description ? "error-input" : ""}
             />
             <label>Description</label>
-            {errors.description && <span className="error-text">{errors.description}</span>}
+            {errors.description && (
+              <span className="error-text">{errors.description}</span>
+            )}
           </div>
 
-          {/* State & City Row */}
+          {/* State & City */}
           <div className="form-row">
             <div className="form-field">
               <select
-                    name="stateId"
-                    value={form.stateId}
-                    onChange={handleChange}
-                    className={errors.stateId ? "error-input" : ""}
-                    >
-                    <option value=""> </option>
-                    {states.map((s) => (
-                        <option key={s.sid} value={s.sid}>
-                        {s.sname}
-                        </option>
-                    ))}
-                    </select>
-                    <label>State</label>
-                    {errors.stateId && <span className="error-text">{errors.stateId}</span>}
+                name="stateId"
+                value={form.stateId}
+                onChange={handleChange}
+                className={errors.stateId ? "error-input" : ""}
+              >
+                <option value=""> </option>
+                {states.map(s => (
+                  <option key={s.sid} value={s.sid}>
+                    {s.sname}
+                  </option>
+                ))}
+              </select>
+              <label>State</label>
+              {errors.stateId && <span className="error-text">{errors.stateId}</span>}
             </div>
 
             <div className="form-field">
@@ -171,12 +187,13 @@ export default function AddPgForm({ ownerId }) {
                 name="cityId"
                 value={form.cityId}
                 onChange={handleChange}
+                disabled={!cities.length}
                 className={errors.cityId ? "error-input" : ""}
               >
                 <option value=""> </option>
-                {cities.map((c) => (
+                {cities.map(c => (
                   <option key={c.cityId} value={c.cityId}>
-                    {c.name}
+                    {c.cityName}
                   </option>
                 ))}
               </select>
@@ -191,12 +208,13 @@ export default function AddPgForm({ ownerId }) {
               name="areaId"
               value={form.areaId}
               onChange={handleChange}
+              disabled={!areas.length}
               className={errors.areaId ? "error-input" : ""}
             >
               <option value=""> </option>
-              {areas.map((a) => (
+              {areas.map(a => (
                 <option key={a.areaId} value={a.areaId}>
-                  {a.name}
+                  {a.areaName}
                 </option>
               ))}
             </select>
@@ -214,7 +232,7 @@ export default function AddPgForm({ ownerId }) {
                 placeholder=" "
                 className={errors.type ? "error-input" : ""}
               />
-              <label>Type (PG / Hostel)</label>
+              <label>Type</label>
               {errors.type && <span className="error-text">{errors.type}</span>}
             </div>
 
@@ -243,7 +261,6 @@ export default function AddPgForm({ ownerId }) {
             <label>Facility</label>
           </div>
 
-          {/* Submit Button */}
           <button className="register-button" disabled={loading}>
             {loading ? "Adding PG..." : "Add PG"}
           </button>
