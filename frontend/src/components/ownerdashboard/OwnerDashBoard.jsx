@@ -1,10 +1,19 @@
 import React from "react";
-import {Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
+
 import "../../css/OwnerDashBoard.css";
 import AddPgForm from "./AddPg";
 
 const OwnerDashboard = ({ ownerId }) => {
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
+  };
   return (
+
     
       <div className="dashboard-container">
         {/* Navbar */}
@@ -14,7 +23,7 @@ const OwnerDashboard = ({ ownerId }) => {
           </div>
 
           <div className="nav-center">
-            <span className="greeting">Hi, Raj</span>
+           Hi, {user?.name || 'Owner'}
           </div>
 
           <div className="nav-right">
@@ -22,7 +31,9 @@ const OwnerDashboard = ({ ownerId }) => {
             <Link to="/requests"><button>Requests</button></Link>
             <Link to="/complaints"><button>Complaints</button></Link>
             <Link to="/ratings"><button>Ratings</button></Link>
-            <button className="logout">Logout</button>
+            <button className="logout" onClick={handleLogout}>
+            Logout
+          </button>
           </div>
         </nav>
 
