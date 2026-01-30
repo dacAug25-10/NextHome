@@ -1,11 +1,12 @@
-.tenant-dashboard {
-  min-height: 100vh;
+/* GENERAL */
+.page {
   background: #e0f2fe;
+  min-height: 100vh;
   font-family: Arial, sans-serif;
 }
 
 /* NAVBAR */
-.tenant-dashboard .tenant-navbar {
+.navbar {
   position: sticky;
   top: 0;
   background: linear-gradient(90deg, #38bdf8, #0ea5e9);
@@ -15,25 +16,21 @@
   gap: 10px;
   color: white;
 }
-
-.tenant-dashboard .nav-left {
+.nav-left {
   font-size: 22px;
   font-weight: bold;
 }
-
-.tenant-dashboard .nav-center {
+.nav-center {
   flex: 1;
   display: flex;
 }
-
-.tenant-dashboard .search-box {
+.search-box {
   flex: 1;
   padding: 8px 12px;
   border-radius: 20px 0 0 20px;
   border: none;
 }
-
-.tenant-dashboard .search-btn {
+.search-btn {
   border: none;
   padding: 8px 14px;
   border-radius: 0 20px 20px 0;
@@ -41,18 +38,20 @@
   color: white;
   cursor: pointer;
 }
-
-.tenant-dashboard .nav-right button {
-  background: white;
+.nav-right button {
+  /* background: white; */
   border: none;
   border-radius: 50%;
   padding: 8px;
   cursor: pointer;
   margin-left: 8px;
 }
-
-/* DROPDOWN */
-.tenant-dashboard .dropdown {
+.tenant-navbar{
+    display: flex;
+    justify-content: space-around;
+}
+/* DROPDOWNS */
+.dropdown {
   position: absolute;
   top: 60px;
   right: 16px;
@@ -61,67 +60,59 @@
   padding: 10px;
   border-radius: 10px;
   width: 180px;
-  box-shadow: 0 6px 15px rgba(0,0,0,.2);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
-
-.tenant-dashboard .dropdown p {
+.dropdown p {
   margin: 8px 0;
   cursor: pointer;
 }
-
-.tenant-dashboard .logout {
-  color: rgb(17, 13, 13);
+.dropdown .logout {
+  color: red;
   font-weight: bold;
 }
 
 /* CARDS */
-.tenant-dashboard .card-container {
+.card-container {
   padding: 16px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 16px;
 }
-
-.tenant-dashboard .pg-card {
+.pg-card {
   background: white;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0,0,0,.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   cursor: pointer;
-  transition: transform .2s;
+  transition: transform 0.2s;
 }
-
-.tenant-dashboard .pg-card:hover {
+.pg-card:hover {
   transform: translateY(-4px);
 }
-
-.tenant-dashboard .pg-card img {
+.pg-card img {
   width: 100%;
   height: 140px;
   object-fit: cover;
 }
-
-.tenant-dashboard .pg-info {
+.pg-info {
   padding: 10px;
 }
-
-.tenant-dashboard .pg-info h3 {
+.pg-info h3 {
   color: #0284c7;
   margin: 4px 0;
   font-size: 16px;
 }
 
 /* MODAL */
-.tenant-dashboard .modal-overlay {
+.modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
-.tenant-dashboard .modal-box {
+.modal-box {
   background: white;
   padding: 20px;
   width: 90%;
@@ -129,35 +120,44 @@
   border-radius: 14px;
   text-align: center;
 }
-
-.tenant-dashboard .modal-buttons {
+.modal-buttons {
   display: flex;
   gap: 12px;
   justify-content: center;
   margin-top: 12px;
 }
-
-.tenant-dashboard .book {
+.book {
   background: #38bdf8;
   color: white;
   border: none;
   padding: 8px 14px;
   border-radius: 8px;
 }
-
-.tenant-dashboard .pay {
+.pay {
   background: white;
   border: 1px solid #38bdf8;
   color: #0284c7;
   padding: 8px 14px;
   border-radius: 8px;
 }
-
-.tenant-dashboard .close {
+.close {
   margin-top: 12px;
   background: #ef4444;
   color: white;
   border: none;
   padding: 6px 12px;
   border-radius: 6px;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .navbar {
+    flex-wrap: wrap;
+  }
+  .nav-center {
+    width: 100%;
+  }
+  .dropdown {
+    right: 10px;
+  }
 }
