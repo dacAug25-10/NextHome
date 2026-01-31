@@ -9,16 +9,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.entities.Pgproperty;
 import com.example.demo.entities.User;
+import com.example.demo.service.PgpropertyService;
 import com.example.demo.service.UserService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/admin")
 @CrossOrigin(origins = "*")
 public class NexthomeController {
 
 	 @Autowired
 	    private UserService userService;
+	 @Autowired
+	  private PgpropertyService pgService;
 
 	    // Get all owners
 	    @GetMapping("/getowners")
@@ -26,4 +30,10 @@ public class NexthomeController {
 	        List<User> owners = userService.getAllOwners();
 	        return ResponseEntity.ok(owners);
 	    }
+	    
+	    @GetMapping("/getAllpg")
+	    public List<Pgproperty> getAllPg() {
+	        return pgService.getAllPg();
+	    }
+
 }
