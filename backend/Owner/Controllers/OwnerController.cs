@@ -152,7 +152,7 @@ namespace Owner.Controllers
             return Ok(feedbackList); 
         }
 
-        [HttpGet("owner/bookings/pending")]
+        [HttpGet("bookings/pending")]
         public ActionResult GetPendingBookings(int ownerId)
         {
             using var db = new NexthomeContext();
@@ -181,7 +181,7 @@ namespace Owner.Controllers
         }
 
 
-        [HttpPut("owner/bookings/{bookingId}/update-status")]
+        [HttpPut("bookings/{bookingId}/update-status")]
         public ActionResult UpdateBookingStatus(int bookingId, [FromBody] BookingStatusUpdateDTO dto, int ownerId)
         {
             using var db = new NexthomeContext();
