@@ -11,7 +11,7 @@ const ComplaintsList = ({ ownerId }) => {
   useEffect(() => {
     const loadData = async () => {
       if (!ownerId) {
-        console.warn("❌ No ownerId provided to ComplaintsList");
+        console.warn(" No ownerId provided to ComplaintsList");
         setError("No owner ID found. Please login again.");
         setLoading(false);
         return;
@@ -20,14 +20,14 @@ const ComplaintsList = ({ ownerId }) => {
       try {
         setLoading(true);
         setError(null);
-        console.log("🟢 Owner ID:", ownerId);
+        console.log("owner ID:", ownerId);
 
         // Fetch all PGs
         const pgRes = await axios.get("http://localhost:5032/api/Tenant/allpgs");
-        console.log("📦 All PGs from API:", pgRes.data);
+        console.log("All PGs from API:", pgRes.data);
 
         const ownerPGs = pgRes.data.filter(pg => Number(pg.ownerId) === Number(ownerId));
-        console.log("📌 PGs for this owner:", ownerPGs);
+        console.log("PGs for this owner:", ownerPGs);
 
         if (!ownerPGs.length) {
           console.warn("⚠️ No PGs found for this owner");
@@ -52,17 +52,17 @@ const ComplaintsList = ({ ownerId }) => {
               compRes.data.forEach(c => (c.pgId = pg.pgId));
               complaintsList.push(...compRes.data);
             } else {
-              console.warn(`⚠️ API returned non-array for PG ${pg.pgName}`, compRes.data);
+              console.warn(` API returned non-array for PG ${pg.pgName}`, compRes.data);
             }
           } catch (err) {
-            console.error(`❌ Error fetching complaints for PG ${pg.pgName}:`, err);
+            console.error(`Error fetching complaints for PG ${pg.pgName}:`, err);
           }
         }
 
-        console.log("✅ All complaints fetched:", complaintsList);
+        console.log(" All complaints fetched:", complaintsList);
         setComplaints(complaintsList);
       } catch (err) {
-        console.error("❌ Unexpected error loading complaints:", err);
+        console.error("Unexpected error loading complaints:", err);
         setError("Unexpected error occurred. Check console.");
       } finally {
         setLoading(false);

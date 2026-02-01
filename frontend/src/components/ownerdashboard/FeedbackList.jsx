@@ -11,7 +11,7 @@ const FeedbackList = ({ ownerId }) => {
   useEffect(() => {
     const loadData = async () => {
       if (!ownerId) {
-        console.warn("❌ No ownerId provided to FeedbackList");
+        console.warn("No ownerId provided to FeedbackList");
         setError("No owner ID found. Please login again.");
         setLoading(false);
         return;
@@ -20,18 +20,18 @@ const FeedbackList = ({ ownerId }) => {
       try {
         setLoading(true);
         setError(null);
-        console.log("🟢 Owner ID:", ownerId);
+        console.log("Owner ID:", ownerId);
 
         // 1️⃣ Fetch all PGs
         const pgRes = await axios.get("http://localhost:5032/api/Tenant/allpgs");
-        console.log("📦 All PGs from API:", pgRes.data);
+        console.log("All PGs from API:", pgRes.data);
 
         // Filter PGs belonging to this owner
         const ownerPGs = pgRes.data.filter(pg => Number(pg.ownerId) === Number(ownerId));
-        console.log("📌 PGs for this owner:", ownerPGs);
+        console.log("Gs for this owner:", ownerPGs);
 
         if (!ownerPGs.length) {
-          console.warn("⚠️ No PGs found for this owner");
+          console.warn("No PGs found for this owner");
           setFeedbacks([]);
           setLoading(false);
           return;
@@ -42,7 +42,7 @@ const FeedbackList = ({ ownerId }) => {
         ownerPGs.forEach(pg => (map[pg.pgId] = pg.pgName));
         setPgMap(map);
 
-        // 2️⃣ Fetch feedback for each PG
+        // Fetch feedback for each PG
         const feedbackList = [];
         for (const pg of ownerPGs) {
           try {
@@ -55,17 +55,17 @@ const FeedbackList = ({ ownerId }) => {
               fbRes.data.forEach(f => (f.pgId = pg.pgId)); // attach PG id
               feedbackList.push(...fbRes.data);
             } else {
-              console.warn(`⚠️ API returned non-array for PG ${pg.pgName}`, fbRes.data);
+              console.warn(`API returned non-array for PG ${pg.pgName}`, fbRes.data);
             }
           } catch (err) {
-            console.error(`❌ Error fetching feedback for PG ${pg.pgName}:`, err);
+            console.error(`Error fetching feedback for PG ${pg.pgName}:`, err);
           }
         }
 
-        console.log("✅ All feedback fetched:", feedbackList);
+        console.log("All feedback fetched:", feedbackList);
         setFeedbacks(feedbackList);
       } catch (err) {
-        console.error("❌ Unexpected error loading feedback:", err);
+        console.error("Unexpected error loading feedback:", err);
         setError("Unexpected error occurred. Check console.");
       } finally {
         setLoading(false);
