@@ -9,6 +9,7 @@ namespace Tenant.models
         public int? Rent { get; set; }
         public string? Facility { get; set; }
         public string? Status { get; set; }
+        public int OwnerId { get; set; }
 
         // Location info
         public int? AreaId { get; set; }

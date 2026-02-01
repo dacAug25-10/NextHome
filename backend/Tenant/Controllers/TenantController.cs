@@ -26,6 +26,7 @@ namespace Tenant.Controllers
                     Rent = p.Rent,
                     Facility = p.Facility,
                     Status = p.Status,
+                    OwnerId = p.OwnerId,
                     AreaId = p.AreaId,
                     AreaName = p.Area != null ? p.Area.AreaName : null,
                     Rooms = p.Rooms.Select(r => new RoomDTO
