@@ -70,9 +70,9 @@ export default function TenantDashboard() {
     <div className="tenant-dashboard">
       {/* NAVBAR */}
       <div className="tenant-navbar">
-        <div className="nav-left">🏠 NextHome</div>
+        <div className="tenant-nav-left">🏠 NextHome</div>
 
-        <div className="nav-center">
+        <div className="tenant-nav-center">
           <input
             className="search-box"
             placeholder="Search PG or City"
@@ -82,7 +82,7 @@ export default function TenantDashboard() {
           <button className="search-btn">🔍</button>
         </div>
 
-        <div className="nav-right">
+        <div className="tenant-nav-right">
           <button onClick={() => setShowNotif(!showNotif)}>🔔</button>
           <button onClick={() => setShowProfile(!showProfile)}>👤</button>
         </div>
@@ -97,13 +97,13 @@ export default function TenantDashboard() {
           <div className="dropdown profile">
             <p>My Profile</p>
             <p>Bookings</p>
-            <p className="logout">Logout</p>
+            <p className="tenant-logout">Logout</p>
           </div>
         )}
       </div>
 
       {/* PG CARDS */}
-      <div className="card-container">
+      <div className="tenant-card-container">
         {filteredPGs.map(pg => (
           <div key={pg.id} className="pg-card" onClick={() => setSelectedPG(pg)}>
             <img src={pg.image} alt={pg.name} />

@@ -6,7 +6,7 @@
 }
 
 /* NAVBAR */
-.navbar {
+.tenant-navbar {
   position: sticky;
   top: 0;
   background: linear-gradient(90deg, #38bdf8, #0ea5e9);
@@ -16,11 +16,11 @@
   gap: 10px;
   color: white;
 }
-.nav-left {
+.tenant-nav-left {
   font-size: 22px;
   font-weight: bold;
 }
-.nav-center {
+.tenant-nav-center {
   flex: 1;
   display: flex;
 }
@@ -38,7 +38,7 @@
   color: white;
   cursor: pointer;
 }
-.nav-right button {
+.tenant-nav-right button {
   /* background: white; */
   border: none;
   border-radius: 50%;
@@ -66,13 +66,13 @@
   margin: 8px 0;
   cursor: pointer;
 }
-.dropdown .logout {
+.dropdown .tenant-logout {
   color: red;
   font-weight: bold;
 }
 
 /* CARDS */
-.card-container {
+.tenant-card-container {
   padding: 16px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

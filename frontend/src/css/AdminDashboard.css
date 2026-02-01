@@ -1,0 +1,112 @@
+/* Root */
+.admin-dashboard {
+  min-height: 100vh;
+  background-color: #20a2c6;
+  color: #ffffff;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* Navbar */
+.admin-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #1553b7;
+  border-bottom: 1px solid #1f3b5a;
+}
+
+.company-name {
+  color: #4da3ff;
+  margin: 0;
+}
+
+/* Navbar Right */
+.admin-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #ffffff;
+}
+
+.icon-btn:hover {
+  color: #4da3ff;
+}
+
+.admin-logout-btn {
+  background-color: #b0292b;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.admin-logout-btn:hover {
+  background-color: #c22020;
+}
+
+/* Content */
+.admin-content {
+  padding: 20px;
+}
+
+.admin-content h1 {
+  margin-bottom: 20px;
+}
+
+/* Cards */
+.admin-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.admin-card {
+  background-color: #102a43;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.admin-card h3 {
+  margin-bottom: 10px;
+  color: #8fc9ff;
+}
+
+.admin-card p {
+  font-size: 26px;
+  font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .admin-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .admin-nav-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .admin-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
