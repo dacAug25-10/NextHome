@@ -24,6 +24,7 @@ function App() {
 
         {/* Owner Dashboard */}
         <Route path="/owner/*" element={<OwnerDashboard />} />
+           {/* <Route path="complaints" element={<ComplaintsList/>} /> */}
 
         {/* Tenant Dashboard */}
         <Route path="/tenant" element={<TenantDashboard />} />
