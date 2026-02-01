@@ -8,7 +8,7 @@ const OwnerDashboard = ({ ownerId }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-  //  SAFE localStorage access
+  // ✅ SAFE localStorage access
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem("user");
@@ -41,20 +41,25 @@ const OwnerDashboard = ({ ownerId }) => {
           Welcome to NextHome Mr.{user?.name || "Owner"}
         </div>
 
-        <div className="nav-right">
-          {/* relative path */}
-          <Link to="add-pg"><button>Add PG</button></Link>
-          <button className="logout" onClick={handleLogout}>Logout</button>
+        <div className="owner-nav-right">
+          {/* ✅ relative path */}
+          <Link to="/owner/add-pg"><button>Add PG</button></Link>
+          {/* <Link to="add-pg"><button>Add PG</button></Link> */}
+          <Link to="/owner/update"><button>UpdatePg</button></Link>
+          <Link to="/owner/complaints"><button>Complaints</button></Link>
+          <Link to="/owner/feedback"><button>Feedback</button></Link>
+          
+          <button className="owner-logout" onClick={handleLogout}>Logout</button>
         </div>
       </nav>
 
       {/* Main Content */}
       <div className="owner-content">
         <Routes>
-          {/* Add PG */}
+          {/* ✅ Add PG */}
           <Route path="add-pg" element={<AddPgForm ownerId={ownerId} />} />
 
-          {/*Default dashboard */}
+          {/* ✅ Default dashboard */}
           <Route
             index
             element={
