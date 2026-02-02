@@ -1,74 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../css/TenantDashboard.css";
 
-const PG_LIST = [
-  {
-    id: 1,
-    name: "NextHome Elite PG",
-    location: "Bangalore",
-    sharing: "1, 2, 3 Sharing",
-    rent: "₹9,500",
-    owner: "Ramesh Kumar",
-    rating: 4.5,
-    image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
-  },
-  {
-    id: 2,
-    name: "Comfort Stay PG",
-    location: "Pune",
-    sharing: "2, 3 Sharing",
-    rent: "₹8,000",
-    owner: "Anita Sharma",
-    rating: 4.2,
-    image: "https://images.unsplash.com/photo-1502673530728-f79b4cab31b1",
-  },
-  {
-    id: 3,
-    name: "Skyline PG",
-    location: "Hyderabad",
-    sharing: "1, 2 Sharing",
-    rent: "₹10,000",
-    owner: "Vikram Singh",
-    rating: 4.6,
-    image: "https://images.unsplash.com/photo-1560185008-5c1f6d4f6b90",
-  },
-  {
-    id: 4,
-    name: "Urban Nest PG",
-    location: "Mumbai",
-    sharing: "2, 3 Sharing",
-    rent: "₹11,000",
-    owner: "Amit Patel",
-    rating: 4.1,
-    image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
-  },
-  {
-    id: 5,
-    name: "Blue Moon PG",
-    location: "Chennai",
-    sharing: "1 Sharing",
-    rent: "₹12,000",
-    owner: "Suresh Rao",
-    rating: 4.8,
-    image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511",
-  },
-  // Add more PGs if needed
-];
-
 export default function TenantDashboard() {
+  const [pgList, setPgList] = useState([]);
   const [selectedPG, setSelectedPG] = useState(null);
   const [search, setSearch] = useState("");
-  const [showNotif, setShowNotif] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
 
-  const filteredPGs = PG_LIST.filter(pg =>
-    pg.name.toLowerCase().includes(search.toLowerCase()) ||
-    pg.location.toLowerCase().includes(search.toLowerCase())
+  const navigate = useNavigate();
+
+  // ====================== Extract tenant ID from localStorage ======================
+  const storedUser = localStorage.getItem("user");
+  let tenantId = null;
+  if (storedUser) {
+    try {
+      const user = JSON.parse(storedUser);
+      tenantId = user.tenantId || user.id; // adjust according to your backend
+    } catch (error) {
+      console.error("Error parsing user from localStorage:", error);
+    }
+  }
+
+  // ====================== Fetch PG list ======================
+  useEffect(() => {
+    fetch("http://localhost:5032/api/Tenant/allpgs")
+      .then(res => res.json())
+      .then(data => setPgList(data))
+      .catch(err => console.error(err));
+  }, []);
+
+  // ====================== Filter PGs by search ======================
+  const filteredPGs = pgList.filter(pg =>
+    pg.pgName.toLowerCase().includes(search.toLowerCase()) ||
+    pg.areaName.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="tenant-dashboard">
-      {/* NAVBAR */}
+
+      {/* ================= NAVBAR (UNCHANGED) ================= */}
       <div className="tenant-navbar">
         <div className="tenant-nav-left">🏠 NextHome</div>
 
@@ -83,59 +54,102 @@ export default function TenantDashboard() {
         </div>
 
         <div className="tenant-nav-right">
-          <button onClick={() => setShowNotif(!showNotif)}>🔔</button>
+          {/* Redirect to notifications page dynamically */}
+          <button
+            onClick={() => {
+              if (tenantId) navigate(`/notifications/${tenantId}`);
+              else alert("Tenant not logged in!");
+            }}
+          >
+            🔔
+          </button>
           <button onClick={() => setShowProfile(!showProfile)}>👤</button>
         </div>
-
-        {showNotif && (
-          <div className="dropdown notif">
-            <p>🔔 No new notifications</p>
-          </div>
-        )}
 
         {showProfile && (
           <div className="dropdown profile">
             <p>My Profile</p>
             <p>Bookings</p>
-            <p className="tenant-logout">Logout</p>
+            <p
+              className="tenant-logout"
+              onClick={() => navigate("/")} // Redirect to logout page
+              style={{ cursor: "pointer" }}
+            >
+              Logout
+            </p>
           </div>
         )}
       </div>
 
-      {/* PG CARDS */}
-      <div className="tenant-card-container">
-        {filteredPGs.map(pg => (
-          <div key={pg.id} className="pg-card" onClick={() => setSelectedPG(pg)}>
-            <img src={pg.image} alt={pg.name} />
-            <div className="pg-info">
-              <h3>{pg.name}</h3>
-              <p>📍 {pg.location}</p>
-              <p>⭐ {pg.rating}</p>
+      {/* ================= DASHBOARD CONTENT ================= */}
+      <div className="dashboard-content">
+
+        {/* PG CARDS */}
+        <div className="tenant-card-container">
+          {filteredPGs.map(pg => (
+            <div
+              key={pg.pgId}
+              className="pg-card"
+              onClick={() => setSelectedPG(pg)}
+            >
+              <img
+                src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"
+                alt={pg.pgName}
+              />
+
+              <div className="pg-info">
+                <h3>{pg.pgName}</h3>
+                <p className="pg-location">📍 {pg.areaName}</p>
+                <p className="pg-rent">₹{pg.rent} / month</p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* MODAL */}
-      {selectedPG && (
-        <div className="modal-overlay" onClick={() => setSelectedPG(null)}>
-          <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <h2>{selectedPG.name}</h2>
-            <p><b>Location:</b> {selectedPG.location}</p>
-            <p><b>Owner:</b> {selectedPG.owner}</p>
-            <p><b>Rent:</b> {selectedPG.rent}</p>
-            <p><b>Sharing:</b> {selectedPG.sharing}</p>
-            <p><b>Rating:</b> {selectedPG.rating}</p>
-
-            <div className="modal-buttons">
-              <button className="book">Book PG</button>
-              <button className="pay">Pay Now</button>
-            </div>
-
-            <button className="close" onClick={() => setSelectedPG(null)}>Close</button>
-          </div>
+          ))}
         </div>
-      )}
+
+        {/* MODAL */}
+        {selectedPG && (
+          <div className="modal-overlay" onClick={() => setSelectedPG(null)}>
+            <div className="modal-box" onClick={e => e.stopPropagation()}>
+
+              <div className="modal-header">
+                <h2>{selectedPG.pgName}</h2>
+              </div>
+
+              <div className="modal-summary">
+                <p>📍 {selectedPG.areaName}</p>
+                <p>💰 ₹{selectedPG.rent} / month</p>
+                <p>🛠 {selectedPG.facility}</p>
+              </div>
+
+              <h3 className="room-heading">🏠 Available Rooms</h3>
+
+              {selectedPG.rooms && selectedPG.rooms.length > 0 ? (
+                <div className="room-grid">
+                  {selectedPG.rooms.map(room => (
+                    <div key={room.roomId} className="room-card">
+                      <div className="room-top">
+                        <span>Room {room.roomNo}</span>
+                        <span className="room-type">{room.roomType}</span>
+                      </div>
+                      <p>👥 Sharing: {room.sharing}</p>
+                      <p>🛏 Available Beds: {room.availableBed}</p>
+                      <p>🔐 Deposit: ₹{room.securityDeposit}</p>
+                      <button className="book-room">Book This Room</button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="no-room">No rooms available</p>
+              )}
+
+              <button className="close" onClick={() => setSelectedPG(null)}>
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+
+      </div> {/* End of dashboard-content */}
     </div>
   );
 }

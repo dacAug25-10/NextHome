@@ -41,7 +41,7 @@ export default function Navbar() {
               </Link>
             </li>
 
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <Link className="nav-link" to="/pg-listings" onClick={() => setMenuOpen(false)}>
                 PG Listings
               </Link>
@@ -50,8 +50,8 @@ export default function Navbar() {
             <li className="nav-item">
               <Link className="nav-link" to="/book-pg" onClick={() => setMenuOpen(false)}>
                 Book PG
-              </Link>
-            </li>
+              </Link> */}
+            {/* </li> */}
 
             <li className="nav-item">
               <Link className="nav-link" to="/contact" onClick={() => setMenuOpen(false)}>

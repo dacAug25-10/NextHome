@@ -10,6 +10,7 @@ import Register from './components/Register';
 import OwnerDashboard from './components/ownerdashboard/OwnerDashBoard.jsx';
 import TenantDashboard from './components/tenantdashboard/TenantDashboard.jsx';
 import AdminDashboard from './components/admindashboard/AdminDashboard.jsx';
+import Notifications from './components/tenantdashboard/Notification.jsx';
 
 function App() {
   return (
@@ -27,7 +28,9 @@ function App() {
            {/* <Route path="complaints" element={<ComplaintsList/>} /> */}
 
         {/* Tenant Dashboard */}
-        <Route path="/tenant" element={<TenantDashboard />} />
+        <Route path="/tenant/*" element={<TenantDashboard />} />
+         <Route path="notifications/:tenantId" element={<Notifications />} />
+
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>
