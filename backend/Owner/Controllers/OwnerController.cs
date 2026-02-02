@@ -30,12 +30,34 @@ namespace Owner.Controllers
                 Type = pg.Type,
                 Rent = pg.Rent,
                 Facility = pg.Facility,
-                Status = pg.Status
+                Status = "Available"
             };
             db.PgProperties.Add(entity);
             db.SaveChanges();
             return Ok(new { Message = "Save Successfully",
                              pgId=entity.PgId});
+        }
+        [HttpGet("getpgs")]
+        public ActionResult<IEnumerable<PgPropertyResponseDTO>> GetPgProperties()
+        {
+
+            var db = new NexthomeContext();
+
+            var result = db.PgProperties
+               .Select(pg => new PgPropertyResponseDTO
+               {
+                   PgId=pg.PgId,
+                   OwnerId=pg.OwnerId,
+                   PgName = pg.PgName,
+                   Description = pg.Description,
+                   Rent = pg.Rent,
+                   Facility = pg.Facility,
+                   AreaId = pg.AreaId, // or map to location name if needed
+                   Status = pg.Status
+               })
+               .ToList();
+
+            return Ok(result);
         }
 
         [HttpPut("updatepg")]

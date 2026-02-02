@@ -6,6 +6,7 @@ import "../../css/OwnerDashBoard.css";
 import AddPgForm from "./AddPg";
 import ComplaintsList from "./ComplaintList";
 import FeedbackList from "./FeedbackList";
+import UpdatePgForm from "./UpdatePgForm";
 
 const OwnerDashboard = () => {
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ const OwnerDashboard = () => {
           <Link to="/owner/add-pg">
             <button>Add PG</button>
           </Link>
-          <Link to="/owner/update">
+          <Link to="/owner/update-pg">
             <button>Update PG</button>
           </Link>
           <Link to="/owner/complaints">
@@ -86,6 +87,8 @@ const OwnerDashboard = () => {
           <Routes>
             {/* Add PG */}
             <Route path="add-pg" element={<AddPgForm ownerId={user.id} />} />
+
+            <Route path="update-pg" element={<UpdatePgForm ownerId={user.id} />} />
 
             {/* Complaints */}
             <Route

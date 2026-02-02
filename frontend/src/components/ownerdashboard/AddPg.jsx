@@ -95,7 +95,7 @@ export default function AddPgForm({ ownerId }) {
 
     try {
       const res = await fetch(
-        "http://localhost:5012/api/Owner/pgproperty/add",
+        "https://localhost:7168/api/Owner/addpgproperty",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
