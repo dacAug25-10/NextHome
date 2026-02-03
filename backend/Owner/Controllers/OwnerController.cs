@@ -1,4 +1,4 @@
-using Owner.models;
+﻿using Owner.models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -173,55 +173,83 @@ namespace Owner.Controllers
 
             return Ok(feedbackList); 
         }
-
-        [HttpGet("bookings/pending")]
+        // OwnerController.cs
+        [HttpGet("bookings/pending/{ownerId}")]
         public ActionResult GetPendingBookings(int ownerId)
         {
             using var db = new NexthomeContext();
 
-            var pendingBookings = db.Bookings
-                 .Join(db.Rooms, b => b.RoomId, r => r.RoomId, (b, r) => new { b, r })
-                 .Join(db.PgProperties, br => br.r.PgId, pg => pg.PgId, (br, pg) => new { br.b, br.r, pg })
-                 .Where(x => x.pg.OwnerId == ownerId && x.b.BookingStatus == "Pending")
-                 .Select(x => new OwnerBookingDTO
-                 {
-                     BookingId = x.b.BookingId,
-                     TenantId = x.b.TenantId,
-                     RoomId = x.b.RoomId,
-                     BookDate = x.b.BookDate,
-                     StartDate = x.b.StartDate,
-                     EndDate = x.b.EndDate,
-                     BookingStatus = x.b.BookingStatus
-                 })
-                 .ToList();
+            Console.WriteLine($"🔍 OwnerId Received: {ownerId}");
 
+            // Join Bookings -> Rooms -> PgProperties -> Users (tenant)
+            var data = db.Bookings
+                .Join(db.Rooms, b => b.RoomId, r => r.RoomId, (b, r) => new { b, r })
+                .Join(db.PgProperties, br => br.r.PgId, pg => pg.PgId, (br, pg) => new { br.b, br.r, pg })
+                .Join(db.Users, brpg => brpg.b.TenantId, u => u.UserId, (brpg, u) => new { brpg.b, brpg.r, brpg.pg, tenantUser = u })
+                .Where(x => x.pg.OwnerId == ownerId && x.b.BookingStatus == "Pending")
+                .Select(x => new OwnerBookingDTO
+                {
+                    BookingId = x.b.BookingId,
+                    TenantId = x.tenantUser.UserId,
+                    TenantName = x.tenantUser.Name,
+                    PgId = x.pg.PgId,
+                    PgName = x.pg.PgName,
+                    RoomId = x.r.RoomId,
+                    RoomNo = x.r.RoomNo,
+                    BookDate = x.b.BookDate,
+                    StartDate = x.b.StartDate,
+                    EndDate = x.b.EndDate,
+                    RentAmount = x.b.RentAmount,
+                    BookingStatus = x.b.BookingStatus
+                })
+                .ToList();
 
-            if (!pendingBookings.Any())
+            Console.WriteLine("📦 Pending Bookings:");
+            foreach (var d in data)
+            {
+                Console.WriteLine($"BookingId={d.BookingId}, Tenant={d.TenantName}, PG={d.PgName}, Room={d.RoomNo}");
+            }
+
+            if (!data.Any())
                 return Ok("No pending booking requests.");
 
-            return Ok(pendingBookings);
+            return Ok(data);
         }
+
 
 
         [HttpPut("bookings/{bookingId}/update-status")]
         public ActionResult UpdateBookingStatus(int bookingId, [FromBody] BookingStatusUpdateDTO dto, int ownerId)
         {
             using var db = new NexthomeContext();
+
+            if (dto.NewStatus != "Approved" && dto.NewStatus != "Rejected")
+                return BadRequest("Invalid status. Must be 'Approved' or 'Rejected'.");
+
+            // Join Bookings -> Rooms -> PGProperties
             var booking = db.Bookings
-                .Join(db.Rooms, b => b.RoomId, r => r.RoomId, (b, r) => new { b, r })
-                .Join(db.PgProperties, br => br.r.PgId, pg => pg.PgId, (br, pg) => new { br.b, br.r, pg })
-                .FirstOrDefault(x => x.b.BookingId == bookingId && x.pg.OwnerId == ownerId);
+                .Join(db.Rooms,
+                      b => b.RoomId,
+                      r => r.RoomId,
+                      (b, r) => new { b, r })
+                .Join(db.PgProperties,
+                      br => br.r.PgId,
+                      pg => pg.PgId,
+                      (br, pg) => new { br.b, br.r, pg })
+                .Where(x => x.b.BookingId == bookingId && x.pg.OwnerId == ownerId)
+                .Select(x => x.b) // select only booking entity
+                .FirstOrDefault();
 
             if (booking == null)
                 return NotFound("Booking not found or you do not have permission.");
-            if (dto.NewStatus != "Approved" && dto.NewStatus != "Rejected")
-                return BadRequest("Invalid status.");
-            booking.b.BookingStatus = dto.NewStatus;
+
+            booking.BookingStatus = dto.NewStatus;
 
             db.SaveChanges();
 
-            return Ok($"Booking {bookingId} has been {dto.NewStatus}.");
+            return Ok(new { message = $"Booking {bookingId} has been {dto.NewStatus}." });
         }
+
 
 
         [HttpGet("state")]

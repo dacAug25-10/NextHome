@@ -1,10 +1,11 @@
+/* ==================== Global ==================== */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #f8fafc;
 }
 
-/* Navbar */
+/* ==================== Navbar ==================== */
 .owner-navbar {
   display: flex;
   justify-content: space-between;
@@ -15,9 +16,12 @@ body {
 
 .owner-logo {
   color: #0369a1;
+  font-weight: bold;
+  font-size: 22px;
 }
-.owner-nav-center{
-  font:bold;
+
+.owner-nav-center {
+  font-weight: bold;
   color: #0369a1; 
 }
 
@@ -35,6 +39,7 @@ body {
   color: white;
   border-radius: 5px;
   cursor: pointer;
+  font-weight: bold;
 }
 
 .owner-nav-right button:hover {
@@ -45,33 +50,54 @@ body {
   background-color: #ef4444 !important;
 }
 
-/* Content */
+/* ==================== Main Content ==================== */
 .owner-content {
   padding: 30px;
 }
 
 .owner-content h2 {
   margin-bottom: 20px;
+  font-size: 26px;
+  color: #1e3a8a; /* Navy blue */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  font-weight: bold;
 }
 
-/* Table */
+/* ==================== Tenant Table ==================== */
 .tenant-table {
   width: 100%;
   border-collapse: collapse;
   background-color: white;
   border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .tenant-table th,
 .tenant-table td {
-  padding: 12px;
+  padding: 12px 16px;
   text-align: left;
   border-bottom: 1px solid #e5e7eb;
+  font-size: 15px;
+  color: #111827;
 }
 
 .tenant-table th {
-  background-color: #e0f2fe;
+  background: linear-gradient(135deg, #f97316, #0ea5e9); /* orange to navy */
+  color: white;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+}
+
+.tenant-table tbody tr {
+  background: #f3f4f6; /* light gray for rows */
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: default;
+}
+
+.tenant-table tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .paid {
@@ -82,4 +108,43 @@ body {
 .pending {
   color: orange;
   font-weight: bold;
+}
+
+/* ==================== Confirm/Reject Buttons ==================== */
+.confirm-btn, .reject-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-right: 6px;
+  font-size: 14px;
+}
+
+.confirm-btn {
+  background: linear-gradient(135deg, #10b981, #059669); /* green */
+}
+
+.confirm-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(16,185,129,0.4);
+}
+
+.reject-btn {
+  background: linear-gradient(135deg, #ef4444, #b91c1c); /* red */
+}
+
+.reject-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(239,68,68,0.4);
+}
+
+/* ==================== No Pending Booking ==================== */
+.no-pending {
+  font-size: 18px;
+  font-weight: bold;
+  color: #374151; /* gray */
+  margin-top: 12px;
 }
