@@ -1,4 +1,4 @@
-// OwnerDashboard.jsx
+// src/components/ownerdashboard/OwnerDashBoard.jsx
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 
@@ -13,41 +13,67 @@ const OwnerDashboard = () => {
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
 
-  // Load user from localStorage safely
+  const [pendingBookings, setPendingBookings] = useState([]);
+  const [loadingBookings, setLoadingBookings] = useState(true);
+
+  // Load user from localStorage
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
         const parsedUser = JSON.parse(storedUser);
-        console.log("Logged-in user object:", parsedUser);
-        console.log("Does parsedUser.id exist?", parsedUser.id);
         setUser(parsedUser);
-      } else {
-        console.warn("No user found in localStorage");
       }
     } catch (err) {
-      console.error("Error parsing localStorage user:", err);
+      console.error("Error parsing user from localStorage:", err);
     } finally {
       setLoadingUser(false);
     }
   }, []);
 
-  const handleLogout = () => {
-    try {
-      localStorage.removeItem("user");
-    } catch (e) {
-      console.warn("Cannot clear localStorage");
+  // Fetch pending bookings for this owner
+  useEffect(() => {
+    if (user?.id) {
+      setLoadingBookings(true);
+      fetch(`https://localhost:7168/api/Owner/bookings/pending/${user.id}`)
+        .then(res => res.json())
+        .then(data => {
+          console.log("Pending bookings API response:", data);
+          setPendingBookings(Array.isArray(data) ? data : []);
+        })
+        .catch(err => console.error("Error fetching pending bookings:", err))
+        .finally(() => setLoadingBookings(false));
     }
+  }, [user]);
+
+  // Update booking status
+  const updateBookingStatus = (bookingId, status) => {
+    if (!window.confirm(`Are you sure you want to ${status} this booking?`)) return;
+
+    const payload = { NewStatus: status };
+    console.log("Updating booking:", bookingId, payload);
+
+    fetch(`https://localhost:7168/api/Owner/bookings/${bookingId}/update-status?ownerId=${user.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log("Update response:", data);
+        // Remove booking from pending list
+        setPendingBookings(prev => prev.filter(b => b.bookingId !== bookingId));
+      })
+      .catch(err => console.error("Error updating booking:", err));
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
     navigate("/");
   };
 
-  if (loadingUser) {
-    return <p>Loading user information...</p>;
-  }
-
-  if (!user) {
-    return <p>No user found. Please log in again.</p>;
-  }
+  if (loadingUser) return <p>Loading user information...</p>;
+  if (!user) return <p>No user found. Please log in again.</p>;
 
   return (
     <div className="dashboard-container">
@@ -62,22 +88,11 @@ const OwnerDashboard = () => {
         </div>
 
         <div className="owner-nav-right">
-          <Link to="/owner/add-pg">
-            <button>Add PG</button>
-          </Link>
-          <Link to="/owner/update-pg">
-            <button>Update PG</button>
-          </Link>
-          <Link to="/owner/complaints">
-            <button>Complaints</button>
-          </Link>
-          <Link to="/owner/feedback">
-            <button>Feedback</button>
-          </Link>
-
-          <button className="owner-logout" onClick={handleLogout}>
-            Logout
-          </button>
+          <Link to="/owner/add-pg"><button>Add PG</button></Link>
+          <Link to="/owner/update-pg"><button>Update PG</button></Link>
+          <Link to="/owner/complaints"><button>Complaints</button></Link>
+          <Link to="/owner/feedback"><button>Feedback</button></Link>
+          <button className="owner-logout" onClick={handleLogout}>Logout</button>
         </div>
       </nav>
 
@@ -85,62 +100,60 @@ const OwnerDashboard = () => {
       <div className="owner-content">
         {user?.id ? (
           <Routes>
-            {/* Add PG */}
             <Route path="add-pg" element={<AddPgForm ownerId={user.id} />} />
-
             <Route path="update-pg" element={<UpdatePgForm ownerId={user.id} />} />
+            <Route path="complaints" element={<ComplaintsList ownerId={user.id} />} />
+            <Route path="feedback" element={<FeedbackList ownerId={user.id} />} />
 
-            {/* Complaints */}
-            <Route
-              path="complaints"
-              element={<ComplaintsList ownerId={user.id} />}
-            />
-
-            <Route
-            path="feedback"
-            element={<FeedbackList ownerId={user.id} />}
-          />
-
-            {/* Default dashboard */}
+            {/* Default Dashboard: Pending Booking Requests */}
             <Route
               index
               element={
                 <div>
-                  <h2>Tenants Currently Living in Your PG</h2>
-                  <table className="tenant-table">
-                    <thead>
-                      <tr>
-                        <th>Tenant Name</th>
-                        <th>Room No</th>
-                        <th>Contact</th>
-                        <th>Move-in Date</th>
-                        <th>Rent Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Rahul Sharma</td>
-                        <td>101</td>
-                        <td>9876543210</td>
-                        <td>12-Jan-2025</td>
-                        <td className="paid">Paid</td>
-                      </tr>
-                      <tr>
-                        <td>Anjali Verma</td>
-                        <td>203</td>
-                        <td>9123456780</td>
-                        <td>05-Feb-2025</td>
-                        <td className="pending">Pending</td>
-                      </tr>
-                      <tr>
-                        <td>Amit Singh</td>
-                        <td>305</td>
-                        <td>9988776655</td>
-                        <td>20-Dec-2024</td>
-                        <td className="paid">Paid</td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  <h2>Pending Booking Requests</h2>
+
+                  {loadingBookings && <p>Loading requests...</p>}
+
+                  {pendingBookings.length === 0 && !loadingBookings ? (
+                    <p>No pending booking requests</p>
+                  ) : (
+                    <table className="tenant-table">
+                      <thead>
+                        <tr>
+                          <th>Tenant Name</th>
+                          <th>PG Name</th>
+                          <th>Room No</th>
+                          <th>Booking Date</th>
+                          <th>Rent Amount</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {pendingBookings.map(b => (
+                          <tr key={b.bookingId}>
+                            <td>{b.tenantName}</td>
+                            <td>{b.pgName}</td>
+                            <td>{b.roomNo}</td>
+                            <td>{new Date(b.bookDate).toLocaleDateString()}</td>
+                            <td>₹{b.rentAmount || 0}</td>
+                            <td>
+                              <button
+                                onClick={() => updateBookingStatus(b.bookingId, "Approved")}
+                                style={{ marginRight: "8px" }}
+                              >
+                                ✅ Confirm
+                              </button>
+                              <button
+                                onClick={() => updateBookingStatus(b.bookingId, "Rejected")}
+                              >
+                                ❌ Reject
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
               }
             />

@@ -16,7 +16,7 @@ export default function TenantDashboard() {
   if (storedUser) {
     try {
       const user = JSON.parse(storedUser);
-      tenantId = user.tenantId || user.id; // adjust according to your backend
+      tenantId = user.tenantId || user.id;
     } catch (error) {
       console.error("Error parsing user from localStorage:", error);
     }
@@ -36,6 +36,83 @@ export default function TenantDashboard() {
     pg.areaName.toLowerCase().includes(search.toLowerCase())
   );
 
+  // ====================== Feedback form state ======================
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+
+  // ====================== Booking handler ======================
+  const handleBookRoom = (room) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to book Room ${room.roomNo} in ${selectedPG.pgName}?`
+    );
+    if (!confirmed) {
+      console.log("Booking cancelled by tenant");
+      return;
+    }
+
+    const bookingData = {
+      roomId: room.roomId,
+      tenantId,
+      startDate: new Date().toISOString(),
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(), // example 1-month booking
+      rentAmount: selectedPG.rent,
+      notes: ""
+    };
+
+    console.log("Booking Data:", bookingData);
+
+    fetch("http://localhost:5032/api/Tenant/book", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bookingData)
+    })
+      .then(res => {
+        if (res.ok) {
+          alert("Booking request sent successfully!");
+        } else {
+          alert("Failed to book room.");
+        }
+      })
+      .catch(err => console.error(err));
+  };
+
+  // ====================== Feedback handler ======================
+  const submitFeedback = () => {
+    if (!rating || rating < 1 || rating > 5) {
+      alert("Please provide a valid rating between 1 and 5.");
+      return;
+    }
+    if (!comment.trim()) {
+      alert("Please provide a comment.");
+      return;
+    }
+
+    const feedbackData = {
+      tenantId,
+      pgId: selectedPG.pgId,
+      rating,
+      comment
+    };
+
+    console.log("Submitting Feedback:", feedbackData);
+
+    fetch("http://localhost:5032/api/Tenant/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(feedbackData)
+    })
+      .then(res => {
+        if (res.ok) {
+          alert("Feedback submitted successfully!");
+          setRating(0);
+          setComment("");
+        } else {
+          alert("Failed to submit feedback.");
+        }
+      })
+      .catch(err => console.error(err));
+  };
+
   return (
     <div className="tenant-dashboard">
 
@@ -54,7 +131,6 @@ export default function TenantDashboard() {
         </div>
 
         <div className="tenant-nav-right">
-          {/* Redirect to notifications page dynamically */}
           <button
             onClick={() => {
               if (tenantId) navigate(`/notifications/${tenantId}`);
@@ -70,13 +146,7 @@ export default function TenantDashboard() {
           <div className="dropdown profile">
             <p>My Profile</p>
             <p>Bookings</p>
-            <p
-              className="tenant-logout"
-              onClick={() => navigate("/")} // Redirect to logout page
-              style={{ cursor: "pointer" }}
-            >
-              Logout
-            </p>
+            <p className="tenant-logout" onClick={() => navigate("/")}>Logout</p>
           </div>
         )}
       </div>
@@ -134,7 +204,9 @@ export default function TenantDashboard() {
                       <p>👥 Sharing: {room.sharing}</p>
                       <p>🛏 Available Beds: {room.availableBed}</p>
                       <p>🔐 Deposit: ₹{room.securityDeposit}</p>
-                      <button className="book-room">Book This Room</button>
+                      <button className="book-room" onClick={() => handleBookRoom(room)}>
+                        Book This Room
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -142,9 +214,28 @@ export default function TenantDashboard() {
                 <p className="no-room">No rooms available</p>
               )}
 
-              <button className="close" onClick={() => setSelectedPG(null)}>
-                Close
-              </button>
+              {/* ================= FEEDBACK FORM ================= */}
+              <div className="feedback-form">
+                <h3>Leave Feedback ⭐</h3>
+                <label>Rating (1-5)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="5"
+                  value={rating}
+                  onChange={(e) => setRating(Number(e.target.value))}
+                />
+                <label>Comment</label>
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+                <button className="submit-feedback" onClick={submitFeedback}>
+                  Submit Feedback
+                </button>
+              </div>
+
+              <button className="close" onClick={() => setSelectedPG(null)}>Close</button>
             </div>
           </div>
         )}

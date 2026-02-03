@@ -34,7 +34,8 @@ namespace Auth_Service.Controllers
                 Phone = dto.Phone,
                 Gender = dto.Gender,
                 RoleId = dto.RoleId,
-                CreatedAt = DateOnly.FromDateTime(dto.CreatedAt)
+                CreatedAt = DateOnly.FromDateTime(dto.CreatedAt),
+                Status="Inactive"
             };
 
             db.Users.Add(user);
