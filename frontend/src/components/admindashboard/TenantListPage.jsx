@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../../css/tenantlist.css"; // new CSS file
 
 const TenantList = () => {
+  const navigate = useNavigate();
   const [tenants, setTenants] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,33 +32,40 @@ const TenantList = () => {
       });
   }, []);
 
-  if (loading) return <p>Loading tenants...</p>;
+  if (loading) return <p className="loading-text">Loading tenants...</p>;
+  if (tenants.length === 0) return <p className="no-data">No tenants found</p>;
 
   return (
-    <div>
-      <h2>All Tenants</h2>
+    <div className="tenant-list-wrapper">
+      <div className="tenant-list-header">
+        <button className="btn-back" onClick={() => navigate("/admin")}>
+          &larr; Back
+        </button>
+        <h2>All Tenants</h2>
+      </div>
 
-      <table className="table table-bordered mt-3">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Register Date</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {tenants.map((tenant, index) => (
-            <tr key={index}>
-              <td>{tenant.name}</td>
-              <td>{tenant.email}</td>
-              <td>{tenant.phone}</td>
-              <td>{tenant.createdAt}</td>
+      <div className="table-container">
+        <table className="tenant-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Register Date</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {tenants.map((tenant, index) => (
+              <tr key={index}>
+                <td>{tenant.name}</td>
+                <td>{tenant.email}</td>
+                <td>{tenant.phone}</td>
+                <td>{tenant.createdAt}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

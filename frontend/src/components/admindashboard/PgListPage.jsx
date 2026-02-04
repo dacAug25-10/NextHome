@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import "../../css/AdminDashboard.css";
+import { useNavigate } from "react-router-dom";
+import "../../css/pglist.css"; // create this new CSS file
 
 const PgListPage = () => {
+  const navigate = useNavigate();
   const [pgList, setPgList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -9,9 +11,7 @@ const PgListPage = () => {
   useEffect(() => {
     fetch("http://localhost:8082/api/admin/getAllpg")
       .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch PG list");
-        }
+        if (!res.ok) throw new Error("Failed to fetch PG list");
         return res.json();
       })
       .then((data) => {
@@ -24,35 +24,35 @@ const PgListPage = () => {
       });
   }, []);
 
-  if (loading) return <p>Loading PGs...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading) return <p className="loading-text">Loading PGs...</p>;
+  if (error) return <p className="error-text">{error}</p>;
 
   return (
-    <div className="admin-list-page">
-      <h2>All PG Properties</h2>
+    <div className="pg-list-wrapper">
+      <div className="pg-list-header">
+        <button className="btn-back" onClick={() => navigate("/admin")}>
+          &larr; Back
+        </button>
+        <h2>All PG Properties</h2>
+      </div>
 
-      <div className="table-responsive">
-        <table className="table table-striped table-bordered">
-          <thead className="table-dark">
-            <tr>
-              <th>PG Name</th>
-              <th>Description</th>
-              <th>Type</th>
-              <th>Rent</th>
-              <th>Facilities</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {pgList.length === 0 ? (
+      {pgList.length === 0 ? (
+        <p className="no-data">No PGs found</p>
+      ) : (
+        <div className="table-container">
+          <table className="pg-table">
+            <thead>
               <tr>
-                <td colSpan="6" className="text-center">
-                  No PGs found
-                </td>
+                <th>PG Name</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Rent</th>
+                <th>Facilities</th>
+                <th>Status</th>
               </tr>
-            ) : (
-              pgList.map((pg, index) => (
+            </thead>
+            <tbody>
+              {pgList.map((pg, index) => (
                 <tr key={index}>
                   <td>{pg.pgName}</td>
                   <td>{pg.description}</td>
@@ -61,21 +61,19 @@ const PgListPage = () => {
                   <td>{pg.facility}</td>
                   <td>
                     <span
-                      className={
-                        pg.status === "Available"
-                          ? "badge bg-success"
-                          : "badge bg-danger"
-                      }
+                      className={`status-badge ${
+                        pg.status === "Available" ? "available" : "unavailable"
+                      }`}
                     >
                       {pg.status}
                     </span>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

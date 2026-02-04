@@ -42,6 +42,13 @@ export default function Login() {
   console.log('Login response:', data);
 
   const role = data.role?.toUpperCase(); // normalize role
+     const status = data.status?.toLowerCase(); // get owner status
+
+      // If owner but not active, block login
+      if (role === 'OWNER' && status !== 'active') {
+        alert('Your account is not approved yet. Please wait for admin approval.');
+        return;
+      }
 
   // save only required info
           localStorage.setItem(

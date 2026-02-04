@@ -1,0 +1,178 @@
+/* ===== Wrapper ===== */
+.pg-list-wrapper {
+  width: 100%;
+  padding: 30px 50px;
+  background: #f9f9fb;
+  min-height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== Header ===== */
+.pg-list-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.pg-list-header h2 {
+  font-size: 32px;
+  color: #333; /* dark color for clarity */
+  margin: 10px 0;
+}
+
+.btn-back {
+  background: linear-gradient(90deg, #ff7e5f, #feb47b);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-back:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(254, 180, 123, 0.5);
+}
+
+/* ===== Table Container ===== */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+/* ===== Table Styling ===== */
+.pg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+/* ===== Table Header ===== */
+.pg-table thead {
+  background: #f3f3f3; /* light gray for clarity */
+  color: #333;          /* dark text for headers */
+  font-weight: 600;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pg-table thead th {
+  padding: 15px 20px;
+  border-bottom: 2px solid #ddd;
+  text-align: left;
+}
+
+/* ===== Table Rows ===== */
+.pg-table tbody td {
+  padding: 15px 20px;
+}
+
+.pg-table tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.pg-table tbody tr:hover {
+  background: #fff2ee;
+  transform: translateX(3px);
+}
+
+/* ===== Status Badges ===== */
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+  min-width: 80px;
+}
+
+.status-badge.available {
+  background-color: #28a745; /* green */
+}
+
+.status-badge.unavailable {
+  background-color: #dc3545; /* red */
+}
+
+/* ===== Loading / No Data / Error ===== */
+.loading-text,
+.no-data,
+.error-text {
+  text-align: center;
+  font-size: 18px;
+  color: #555;
+  margin-top: 40px;
+}
+
+.error-text {
+  color: red;
+}
+
+/* ===== Responsive Design ===== */
+@media screen and (max-width: 1024px) {
+  .pg-list-wrapper {
+    padding: 25px 30px;
+  }
+
+  .pg-list-header h2 {
+    font-size: 28px;
+  }
+
+  .pg-table th,
+  .pg-table td {
+    padding: 12px 15px;
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .pg-list-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pg-list-header h2 {
+    margin-top: 15px;
+  }
+
+  .btn-back {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .pg-list-wrapper {
+    padding: 15px 10px;
+  }
+
+  .pg-table th,
+  .pg-table td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+
+  .pg-list-header h2 {
+    font-size: 22px;
+  }
+
+  .btn-back {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}

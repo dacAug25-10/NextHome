@@ -35,12 +35,11 @@ function App() {
         <Route path="/tenant/notifications/:tenantId" element={<Notifications />} />
 
         {/* ✅ ADMIN ROUTES (THIS IS THE FIX) */}
-        <Route path="/admin/*" element={<AdminDashboard />}>
-          <Route path="owners" element={<OwnerList />} />
-          <Route path="tenants" element={<TenantList />} />
-          <Route path="pgs" element={<PgList />} />
-          <Route path="pending-owners" element={<PendingOwners />} />
-        </Route>
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/owners" element={<OwnerList />} />
+        <Route path="/admin/tenants" element={<TenantList />} />
+        <Route path="/admin/pgs" element={<PgList />} />
+        <Route path="/admin/pending-owners" element={<PendingOwners />} />
 
       </Routes>
     </BrowserRouter>

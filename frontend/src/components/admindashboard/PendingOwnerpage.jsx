@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "../../css/pendinglist.css";
 
 const PendingOwners = () => {
+  const navigate = useNavigate();
   const [pendingOwners, setPendingOwners] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -8,7 +11,6 @@ const PendingOwners = () => {
     fetch("http://localhost:8082/api/admin/getowners")
       .then((res) => res.json())
       .then((data) => {
-        // ✅ ONLY roleId=2 AND status="Inactive"
         const filtered = data.filter(
           (user) =>
             user.roleId === 2 &&
@@ -45,50 +47,59 @@ const PendingOwners = () => {
     });
   };
 
-  if (loading) return <p>Loading pending owners...</p>;
+  if (loading) return <p className="loading-text">Loading pending owners...</p>;
 
   return (
-    <div>
-      <h2>Pending Owner Requests</h2>
+    <div className="pending-owners-wrapper">
+      {/* ===== HEADER WITH BACK BUTTON ALWAYS VISIBLE ===== */}
+      <div className="pending-owners-header">
+        <button className="btn-back" onClick={() => navigate("/admin")}>
+          &larr; Back
+        </button>
+        <h2>Pending Owner Requests</h2>
+      </div>
 
+      {/* ===== CONDITIONAL TABLE OR NO DATA ===== */}
       {pendingOwners.length === 0 ? (
-        <p>No pending requests</p>
+        <p className="no-data">No pending requests</p>
       ) : (
-        <table className="table table-bordered mt-3">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Created At</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pendingOwners.map((owner) => (
-              <tr key={owner.userId}>
-                <td>{owner.name}</td>
-                <td>{owner.email}</td>
-                <td>{owner.phone}</td>
-                <td>{owner.createdAt}</td>
-                <td>
-                  <button
-                    className="btn btn-success btn-sm me-2"
-                    onClick={() => handleConfirm(owner.userId)}
-                  >
-                    Confirm
-                  </button>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => handleReject(owner.userId)}
-                  >
-                    Reject
-                  </button>
-                </td>
+        <div className="table-container">
+          <table className="pending-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Created At</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {pendingOwners.map((owner) => (
+                <tr key={owner.userId}>
+                  <td>{owner.name}</td>
+                  <td>{owner.email}</td>
+                  <td>{owner.phone}</td>
+                  <td>{owner.createdAt}</td>
+                  <td>
+                    <button
+                      className="btn btn-success btn-sm me-2"
+                      onClick={() => handleConfirm(owner.userId)}
+                    >
+                      Confirm
+                    </button>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleReject(owner.userId)}
+                    >
+                      Reject
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

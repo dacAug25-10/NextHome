@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../../css/AdminDashboard.css";
 
 const AdminDashboard = () => {
@@ -58,16 +58,12 @@ const AdminDashboard = () => {
                   <>
                     <p>
                       You have{" "}
-                      <strong>{dashboardData.pendingRequests}</strong>{" "}
-                      owner request(s)
+                      <strong>{dashboardData.pendingRequests}</strong> owner request(s)
                     </p>
 
                     <button
                       className="btn btn-primary btn-sm"
-                      onClick={() => {
-                        setShowNotification(false);
-                        navigate("/admin/pending-owners");
-                      }}
+                      onClick={() => navigate("/admin/pending-owners")}
                     >
                       View Request
                     </button>
@@ -113,11 +109,6 @@ const AdminDashboard = () => {
             <h3>Pending Requests</h3>
             <p>{dashboardData.pendingRequests}</p>
           </div>
-        </div>
-
-        {/* Child routes */}
-        <div className="admin-child-content">
-          <Outlet />
         </div>
       </main>
     </div>
