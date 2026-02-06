@@ -7,6 +7,7 @@ import AddPgForm from "./AddPg";
 import ComplaintsList from "./ComplaintList";
 import FeedbackList from "./FeedbackList";
 import UpdatePgForm from "./UpdatePgForm";
+import AddRoomForm from "./AddroomForm";
 
 const OwnerDashboard = () => {
   const navigate = useNavigate();
@@ -89,6 +90,7 @@ const OwnerDashboard = () => {
 
         <div className="owner-nav-right">
           <Link to="/owner/add-pg"><button>Add PG</button></Link>
+           <Link to="/owner/add-room"><button>Add Room</button></Link>
           <Link to="/owner/update-pg"><button>Update PG</button></Link>
           <Link to="/owner/complaints"><button>Complaints</button></Link>
           <Link to="/owner/feedback"><button>Feedback</button></Link>
@@ -101,6 +103,7 @@ const OwnerDashboard = () => {
         {user?.id ? (
           <Routes>
             <Route path="add-pg" element={<AddPgForm ownerId={user.id} />} />
+            <Route path="add-room" element={<AddRoomForm ownerId={user.id} />} />
             <Route path="update-pg" element={<UpdatePgForm ownerId={user.id} />} />
             <Route path="complaints" element={<ComplaintsList ownerId={user.id} />} />
             <Route path="feedback" element={<FeedbackList ownerId={user.id} />} />

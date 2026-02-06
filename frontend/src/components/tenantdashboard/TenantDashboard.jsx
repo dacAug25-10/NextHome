@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 import "../../css/TenantDashboard.css";
 
 export default function TenantDashboard() {
@@ -8,17 +8,21 @@ export default function TenantDashboard() {
   const [search, setSearch] = useState("");
   const [showProfile, setShowProfile] = useState(false);
 
+  // NEW: notification count
+  const [notificationCount, setNotificationCount] = useState(0);
+
   const navigate = useNavigate();
 
-  // ====================== Extract tenant ID from localStorage ======================
+  // ====================== Extract tenant ID ======================
   const storedUser = localStorage.getItem("user");
   let tenantId = null;
+
   if (storedUser) {
     try {
       const user = JSON.parse(storedUser);
       tenantId = user.tenantId || user.id;
     } catch (error) {
-      console.error("Error parsing user from localStorage:", error);
+      console.error(error);
     }
   }
 
@@ -30,93 +34,71 @@ export default function TenantDashboard() {
       .catch(err => console.error(err));
   }, []);
 
-  // ====================== Filter PGs by search ======================
+  // ====================== Fetch notification count ======================
+  useEffect(() => {
+    if (!tenantId) return;
+
+    fetch(`http://localhost:5032/api/Tenant/notifications/${tenantId}`)
+      .then(res => res.json())
+      .then(data => setNotificationCount(data.length))
+      .catch(err => console.error(err));
+  }, [tenantId]);
+
+  // ====================== Filter PGs ======================
   const filteredPGs = pgList.filter(pg =>
     pg.pgName.toLowerCase().includes(search.toLowerCase()) ||
     pg.areaName.toLowerCase().includes(search.toLowerCase())
   );
 
-  // ====================== Feedback form state ======================
+  // ====================== Feedback ======================
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
 
-  // ====================== Booking handler ======================
+  // ====================== Booking ======================
   const handleBookRoom = (room) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to book Room ${room.roomNo} in ${selectedPG.pgName}?`
-    );
-    if (!confirmed) {
-      console.log("Booking cancelled by tenant");
-      return;
-    }
-
-    const bookingData = {
-      roomId: room.roomId,
-      tenantId,
-      startDate: new Date().toISOString(),
-      endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(), // example 1-month booking
-      rentAmount: selectedPG.rent,
-      notes: ""
-    };
-
-    console.log("Booking Data:", bookingData);
+    if (!window.confirm(`Book Room ${room.roomNo}?`)) return;
 
     fetch("http://localhost:5032/api/Tenant/book", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bookingData)
-    })
-      .then(res => {
-        if (res.ok) {
-          alert("Booking request sent successfully!");
-        } else {
-          alert("Failed to book room.");
-        }
+      body: JSON.stringify({
+        roomId: room.roomId,
+        tenantId,
+        startDate: new Date().toISOString(),
+        endDate: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString(),
+        rentAmount: selectedPG.rent,
+        notes: ""
       })
-      .catch(err => console.error(err));
+    })
+      .then(res => res.ok ? alert("Booking request sent!") : alert("Booking failed"))
+      .catch(console.error);
   };
 
-  // ====================== Feedback handler ======================
+  // ====================== Feedback ======================
   const submitFeedback = () => {
-    if (!rating || rating < 1 || rating > 5) {
-      alert("Please provide a valid rating between 1 and 5.");
+    if (!rating || !comment.trim()) {
+      alert("Please fill all fields");
       return;
     }
-    if (!comment.trim()) {
-      alert("Please provide a comment.");
-      return;
-    }
-
-    const feedbackData = {
-      tenantId,
-      pgId: selectedPG.pgId,
-      rating,
-      comment
-    };
-
-    console.log("Submitting Feedback:", feedbackData);
 
     fetch("http://localhost:5032/api/Tenant/feedback", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(feedbackData)
-    })
-      .then(res => {
-        if (res.ok) {
-          alert("Feedback submitted successfully!");
-          setRating(0);
-          setComment("");
-        } else {
-          alert("Failed to submit feedback.");
-        }
+      body: JSON.stringify({
+        tenantId,
+        pgId: selectedPG.pgId,
+        rating,
+        comment
       })
-      .catch(err => console.error(err));
+    })
+      .then(res => res.ok ? alert("Feedback submitted!") : alert("Failed"))
+      .catch(console.error);
   };
 
   return (
     <div className="tenant-dashboard">
 
-      {/* ================= NAVBAR (UNCHANGED) ================= */}
+      {/* ================= NAVBAR ================= */}
       <div className="tenant-navbar">
         <div className="tenant-nav-left">🏠 NextHome</div>
 
@@ -131,14 +113,39 @@ export default function TenantDashboard() {
         </div>
 
         <div className="tenant-nav-right">
+          {/* Bell with auto-clear */}
           <button
+            style={{ position: "relative" }}
             onClick={() => {
-              if (tenantId) navigate(`/notifications/${tenantId}`);
-              else alert("Tenant not logged in!");
+              if (!tenantId) {
+                alert("Tenant not logged in!");
+                return;
+              }
+
+              setNotificationCount(0); // NEW: clear count
+              navigate(`/tenant/notifications/${tenantId}`);
             }}
           >
             🔔
+            {notificationCount > 0 && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: "-4px",
+                  right: "-4px",
+                  background: "#ef4444",
+                  color: "white",
+                  borderRadius: "50%",
+                  padding: "2px 6px",
+                  fontSize: "11px",
+                  fontWeight: "800"
+                }}
+              >
+                {notificationCount}
+              </span>
+            )}
           </button>
+
           <button onClick={() => setShowProfile(!showProfile)}>👤</button>
         </div>
 
@@ -151,10 +158,8 @@ export default function TenantDashboard() {
         )}
       </div>
 
-      {/* ================= DASHBOARD CONTENT ================= */}
+      {/* ================= CONTENT ================= */}
       <div className="dashboard-content">
-
-        {/* PG CARDS */}
         <div className="tenant-card-container">
           {filteredPGs.map(pg => (
             <div
@@ -164,9 +169,8 @@ export default function TenantDashboard() {
             >
               <img
                 src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"
-                alt={pg.pgName}
+                alt=""
               />
-
               <div className="pg-info">
                 <h3>{pg.pgName}</h3>
                 <p className="pg-location">📍 {pg.areaName}</p>
@@ -176,71 +180,51 @@ export default function TenantDashboard() {
           ))}
         </div>
 
-        {/* MODAL */}
         {selectedPG && (
           <div className="modal-overlay" onClick={() => setSelectedPG(null)}>
             <div className="modal-box" onClick={e => e.stopPropagation()}>
+              <h2>{selectedPG.pgName}</h2>
 
-              <div className="modal-header">
-                <h2>{selectedPG.pgName}</h2>
+              <h3>🏠 Available Rooms</h3>
+              <div className="room-grid">
+                {selectedPG.rooms?.map(room => (
+                  <div key={room.roomId} className="room-card">
+                    <p>Room {room.roomNo}</p>
+                    <p>Sharing: {room.sharing}</p>
+                    <p>Available Beds: {room.availableBed}</p>
+                    <p>Deposit: ₹{room.securityDeposit}</p>
+                    <button onClick={() => handleBookRoom(room)}>
+                      Book This Room
+                    </button>
+                  </div>
+                ))}
               </div>
 
-              <div className="modal-summary">
-                <p>📍 {selectedPG.areaName}</p>
-                <p>💰 ₹{selectedPG.rent} / month</p>
-                <p>🛠 {selectedPG.facility}</p>
-              </div>
-
-              <h3 className="room-heading">🏠 Available Rooms</h3>
-
-              {selectedPG.rooms && selectedPG.rooms.length > 0 ? (
-                <div className="room-grid">
-                  {selectedPG.rooms.map(room => (
-                    <div key={room.roomId} className="room-card">
-                      <div className="room-top">
-                        <span>Room {room.roomNo}</span>
-                        <span className="room-type">{room.roomType}</span>
-                      </div>
-                      <p>👥 Sharing: {room.sharing}</p>
-                      <p>🛏 Available Beds: {room.availableBed}</p>
-                      <p>🔐 Deposit: ₹{room.securityDeposit}</p>
-                      <button className="book-room" onClick={() => handleBookRoom(room)}>
-                        Book This Room
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="no-room">No rooms available</p>
-              )}
-
-              {/* ================= FEEDBACK FORM ================= */}
               <div className="feedback-form">
                 <h3>Leave Feedback ⭐</h3>
-                <label>Rating (1-5)</label>
                 <input
                   type="number"
                   min="1"
                   max="5"
                   value={rating}
-                  onChange={(e) => setRating(Number(e.target.value))}
+                  onChange={e => setRating(+e.target.value)}
                 />
-                <label>Comment</label>
                 <textarea
                   value={comment}
-                  onChange={(e) => setComment(e.target.value)}
+                  onChange={e => setComment(e.target.value)}
                 />
-                <button className="submit-feedback" onClick={submitFeedback}>
-                  Submit Feedback
-                </button>
+                <button onClick={submitFeedback}>Submit Feedback</button>
               </div>
 
-              <button className="close" onClick={() => setSelectedPG(null)}>Close</button>
+              <button className="close" onClick={() => setSelectedPG(null)}>
+                Close
+              </button>
             </div>
           </div>
         )}
+      </div>
 
-      </div> {/* End of dashboard-content */}
+      <Outlet />
     </div>
   );
 }

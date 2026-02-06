@@ -12,7 +12,8 @@ namespace Auth_Service.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegisterDTO dto)
         {
-           var db=new NexthomeContext();
+            var db = new NexthomeContext();
+
             if (!ModelState.IsValid)
             {
                 var errors = ModelState
@@ -25,7 +26,9 @@ namespace Auth_Service.Controllers
                 return BadRequest(errors);
             }
 
-          
+            // Set status based on RoleId
+            string status = dto.RoleId == 2 ? "Inactive" : "Active";
+
             var user = new User
             {
                 Name = dto.Name,
@@ -35,7 +38,7 @@ namespace Auth_Service.Controllers
                 Gender = dto.Gender,
                 RoleId = dto.RoleId,
                 CreatedAt = DateOnly.FromDateTime(dto.CreatedAt),
-                Status="Inactive"
+                Status = status
             };
 
             db.Users.Add(user);

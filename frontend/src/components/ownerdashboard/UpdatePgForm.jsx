@@ -108,7 +108,7 @@ export default function UpdatePgTable({ ownerId }) {
           <tr>
             <th>PG Name</th>
             <th>Description</th>
-            <th>Type</th>
+            {/* <th>Type</th> */}
             <th>Rent</th>
             <th>Facility</th>
             <th>Status</th>
@@ -120,7 +120,7 @@ export default function UpdatePgTable({ ownerId }) {
             <tr key={pg.pgId}>
               <td>{pg.pgName}</td>
               <td>{pg.description}</td>
-              <td>{pg.type}</td>
+              {/* <td>{pg.type}</td> */}
               <td>{pg.rent}</td>
               <td>{pg.facility}</td>
               <td>{pg.status}</td>

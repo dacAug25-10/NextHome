@@ -64,14 +64,15 @@ export default function AddPgForm({ ownerId }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setForm(prev => ({
-      ...prev,
-      [name]:
-        name === "stateId" || name === "cityId" || name === "areaId"
-          ? Number(value)
-          : value
-    }));
+    // Convert number fields
+    let val = value;
+    if (["stateId", "cityId", "areaId", "rent"].includes(name)) {
+      val = Number(value);
+    }
 
+    setForm(prev => ({ ...prev, [name]: val }));
+
+    // Remove error for this field
     setErrors(prev => ({ ...prev, [name]: "" }));
   };
 
@@ -80,9 +81,16 @@ export default function AddPgForm({ ownerId }) {
     e.preventDefault();
 
     const newErrors = {};
+
+    // Required fields validation
     Object.keys(form).forEach(key => {
       if (!form[key]) newErrors[key] = "This field is required";
     });
+
+    // Rent minimum validation
+    if (form.rent < 1000) {
+      newErrors.rent = "Rent must be at least 1000";
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -157,9 +165,7 @@ export default function AddPgForm({ ownerId }) {
               className={errors.description ? "error-input" : ""}
             />
             <label>Description</label>
-            {errors.description && (
-              <span className="error-text">{errors.description}</span>
-            )}
+            {errors.description && <span className="error-text">{errors.description}</span>}
           </div>
 
           {/* State & City */}
@@ -173,9 +179,7 @@ export default function AddPgForm({ ownerId }) {
               >
                 <option value=""> </option>
                 {states.map(s => (
-                  <option key={s.sid} value={s.sid}>
-                    {s.sname}
-                  </option>
+                  <option key={s.sid} value={s.sid}>{s.sname}</option>
                 ))}
               </select>
               <label>State</label>
@@ -192,9 +196,7 @@ export default function AddPgForm({ ownerId }) {
               >
                 <option value=""> </option>
                 {cities.map(c => (
-                  <option key={c.cityId} value={c.cityId}>
-                    {c.cityName}
-                  </option>
+                  <option key={c.cityId} value={c.cityId}>{c.cityName}</option>
                 ))}
               </select>
               <label>City</label>
@@ -213,9 +215,7 @@ export default function AddPgForm({ ownerId }) {
             >
               <option value=""> </option>
               {areas.map(a => (
-                <option key={a.areaId} value={a.areaId}>
-                  {a.areaName}
-                </option>
+                <option key={a.areaId} value={a.areaId}>{a.areaName}</option>
               ))}
             </select>
             <label>Area</label>

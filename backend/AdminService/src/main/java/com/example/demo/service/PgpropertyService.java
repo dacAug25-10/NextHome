@@ -19,5 +19,9 @@ public class PgpropertyService {
 	    public List<Pgproperty> getAllPg() {
 	        return pgRepository.findAll();
 	    }
+	    
+	    public long getTotalPgCount() {
+	        return pgRepository.count();
+	    }
 
 }

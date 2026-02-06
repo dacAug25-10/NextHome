@@ -1,93 +1,193 @@
+/* ================= PAGE ================= */
 .notifications-page {
-  padding: 20px;
+  padding: 26px;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f97316, #0ea5e9); /* orange to navy */
-  font-family: Arial, sans-serif;
-  color: #fff;
+  background:
+    radial-gradient(circle at top left, #1e3a8a33, transparent 40%),
+    linear-gradient(180deg, #0b1220, #111827);
+  font-family: "Inter", "Segoe UI", sans-serif;
+  color: #e5e7eb;
 }
 
-/* Back Button */
+/* ================= BACK BUTTON ================= */
 .back-button {
-  background: #ff7f50; /* coral-orange */
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
   border: none;
-  padding: 10px 18px;
-  border-radius: 10px;
+  padding: 10px 22px;
+  border-radius: 999px;
   cursor: pointer;
   color: white;
-  font-weight: bold;
-  font-size: 16px;
-  margin-bottom: 20px;
-  transition: all 0.2s;
-}
-.back-button:hover {
-  background: #ff6333;
+  font-weight: 800;
+  font-size: 14px;
+  margin-bottom: 26px;
+  letter-spacing: 0.3px;
+  transition: all 0.25s ease;
 }
 
-/* Heading */
+.back-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(14, 165, 233, 0.45);
+}
+
+/* ================= HEADING ================= */
 .notif-heading {
   font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  background: linear-gradient(90deg, #fbbf24, #3b82f6);
+  font-weight: 900;
+  margin-bottom: 26px;
+  letter-spacing: 0.4px;
+  background: linear-gradient(90deg, #38bdf8, #22c55e);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Notification container */
+/* ================= CONTAINER ================= */
 .notif-container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
-/* Cards */
+/* ================= CARD ================= */
 .notif-card {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  padding: 18px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  padding: 22px 24px;
+  border-radius: 20px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.03)
+    );
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: slideFade 0.35s ease;
 }
+
+@keyframes slideFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .notif-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  transform: translateY(-6px);
+  box-shadow:
+    0 26px 60px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
-/* Status colors */
-.notif-card.confirmed {
-  background: linear-gradient(135deg, #10b981, #059669); /* green */
-}
-.notif-card.pending {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b); /* yellow-orange */
-}
-.notif-card.cancelled {
-  background: linear-gradient(135deg, #ef4444, #b91c1c); /* red */
-}
-.notif-card.unknown {
-  background: linear-gradient(135deg, #6b7280, #374151); /* gray */
+/* ================= STATUS STRIP ================= */
+.notif-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 6px;
+  border-radius: 999px;
 }
 
-/* Loading / No notifications */
+/* ================= STATUS COLORS ================= */
+.notif-card.confirmed::before {
+  background: linear-gradient(180deg, #22c55e, #16a34a);
+}
+
+.notif-card.pending::before {
+  background: linear-gradient(180deg, #facc15, #eab308);
+}
+
+.notif-card.cancelled::before {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+}
+
+.notif-card.unknown::before {
+  background: linear-gradient(180deg, #94a3b8, #64748b);
+}
+
+/* ================= TEXT ================= */
+.notif-card h4 {
+  font-size: 18px;
+  font-weight: 900;
+  margin-bottom: 6px;
+  color: #f9fafb;
+}
+
+.notif-card p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #c7d2fe;
+}
+
+/* ================= STATUS BADGE ================= */
+.status-badge {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+}
+
+/* Badge themes */
+.confirmed .status-badge {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.pending .status-badge {
+  background: rgba(250, 204, 21, 0.25);
+  color: #fde047;
+}
+
+.cancelled .status-badge {
+  background: rgba(239, 68, 68, 0.25);
+  color: #f87171;
+}
+
+.unknown .status-badge {
+  background: rgba(148, 163, 184, 0.25);
+  color: #e5e7eb;
+}
+
+/* ================= EMPTY / LOADING ================= */
 .loading,
 .no-notif {
   font-size: 18px;
-  font-weight: bold;
-  margin-top: 16px;
+  font-weight: 800;
+  opacity: 0.85;
+  margin-top: 30px;
+  text-align: center;
+  letter-spacing: 0.3px;
 }
 
-/* Responsive */
+/* ================= RESPONSIVE ================= */
 @media (max-width: 600px) {
-  .notif-card {
-    padding: 14px;
-    font-size: 14px;
+  .notif-heading {
+    font-size: 24px;
   }
 
-  .notif-heading {
-    font-size: 26px;
+  .notif-card {
+    padding: 18px;
+  }
+
+  .notif-card h4 {
+    font-size: 16px;
   }
 
   .back-button {
-    padding: 8px 14px;
-    font-size: 14px;
+    padding: 8px 18px;
+    font-size: 13px;
   }
 }
