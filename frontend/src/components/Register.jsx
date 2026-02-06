@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import "../css/register.css";
 
 
+const auth_url=process.env.REACT_APP_API_BASE_URL;
 function Register() {
+
+  
+
   const [formData, setFormData] = useState({
     id: '',
     roleId: '',
@@ -18,7 +22,7 @@ function Register() {
   const [errors, setErrors] = useState({}); 
 
   useEffect(() => {
-    fetch('http://localhost:5012/api/Nexthome/roles')
+    fetch(`${auth_url}/auth/api/Nexthome/roles`)
       .then(res => res.json())
       .then(data => {
         const mappedRoles = data.map(role => ({
@@ -70,7 +74,7 @@ function Register() {
 
     const payload = { ...formData, roleId: Number(formData.roleId) };
 
-    fetch('http://localhost:5012/api/Nexthome/register', {
+    fetch(`${auth_url}/auth/api/Nexthome/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)

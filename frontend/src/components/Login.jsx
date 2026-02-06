@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/login.css';
 
+
+const auth_url=process.env.REACT_APP_API_BASE_URL;
 export default function Login() {
   const navigate = useNavigate();
 
@@ -32,7 +34,7 @@ export default function Login() {
     if (!validateLogin()) return;
 
     fetch(
-      `http://localhost:5012/api/Nexthome/login?username=${encodeURIComponent(
+      `${auth_url}/auth/api/Nexthome/login?username=${encodeURIComponent(
         formData.username
       )}&password=${encodeURIComponent(formData.password)}`,
       { method: 'POST' }

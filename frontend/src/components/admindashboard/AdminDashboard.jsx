@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../css/AdminDashboard.css";
 
+// Use API Gateway URL from env
+const gateway_url = process.env.REACT_APP_API_GATEWAY_URL || "http://localhost:8080";
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
@@ -16,16 +19,19 @@ const AdminDashboard = () => {
 
   // Logout
   const handleLogout = () => {
-    localStorage.removeItem("admin");
+    localStorage.removeItem("user");
     navigate("/");
   };
 
-  // Fetch dashboard data
+  // Fetch dashboard data via API Gateway
   useEffect(() => {
-    fetch("http://localhost:8082/api/admin/dashboard")
-      .then((res) => res.json())
+    fetch(`${gateway_url}/admin/api/admin/dashboard`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
       .then((data) => setDashboardData(data))
-      .catch((err) => console.error(err));
+      .catch((err) => console.error("Error fetching dashboard:", err));
   }, []);
 
   return (
